@@ -1,69 +1,65 @@
-// Scroll animations using Intersection Observer
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
+// Scroll-triggered fade-in animations
 const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
+    entries.forEach(entry => {
         if (entry.isIntersecting) {
-            // Add animation class when element is in view
-            if (entry.target.classList.contains('animate-fade-up')) {
-                entry.target.style.animation = 'fadeUp 0.8s ease-out 0.2s forwards';
-            } else if (entry.target.classList.contains('animate-fade-up-delay')) {
-                entry.target.style.animation = 'fadeUp 0.8s ease-out 0.4s forwards';
-            } else if (entry.target.classList.contains('animate-fade-up-delay-2')) {
-                entry.target.style.animation = 'fadeUp 0.8s ease-out 0.6s forwards';
-            } else if (entry.target.classList.contains('animate-fade-in')) {
-                entry.target.style.animation = 'fadeIn 0.8s ease-out forwards';
-            }
-            
-            // Stop observing once animated
+            entry.target.classList.add('visible');
             observer.unobserve(entry.target);
         }
     });
-}, observerOptions);
-
-// Observe all elements with animation classes
-document.addEventListener('DOMContentLoaded', () => {
-    const animatedElements = document.querySelectorAll(
-        '.animate-fade-up, .animate-fade-up-delay, .animate-fade-up-delay-2, .animate-fade-in'
-    );
-    
-    animatedElements.forEach((element) => {
-        observer.observe(element);
-    });
+}, {
+    threshold: 0.1,
+    rootMargin: '0px 0px -40px 0px'
 });
 
-// Smooth scroll for anchor links
-document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener('click', function (e) {
-        const href = this.getAttribute('href');
-        if (href !== '#') {
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
+// Stagger children for grid layouts
+const staggerObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const children = entry.target.querySelectorAll('.animate-fade-in');
+            children.forEach((child, i) => {
+                child.style.animationDelay = `${i * 0.08}s`;
+                child.classList.add('visible');
+            });
+            staggerObserver.unobserve(entry.target);
         }
     });
+}, {
+    threshold: 0.05,
+    rootMargin: '0px 0px -20px 0px'
 });
 
-// Navbar sticky effect
-const navbar = document.querySelector('.navbar');
-let lastScroll = 0;
+document.addEventListener('DOMContentLoaded', () => {
+    // Observe individual elements
+    document.querySelectorAll('.animate-fade-in').forEach(el => {
+        // Skip elements that are children of grids (handled by stagger)
+        if (!el.parentElement.classList.contains('services-grid') &&
+            !el.parentElement.classList.contains('why-grid') &&
+            !el.parentElement.classList.contains('approach-grid') &&
+            !el.parentElement.classList.contains('faq-grid') &&
+            !el.parentElement.classList.contains('industries-grid') &&
+            !el.parentElement.classList.contains('testimonials-grid')) {
+            observer.observe(el);
+        }
+    });
 
-window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
+    // Observe grid parents for staggered animations
+    document.querySelectorAll('.services-grid, .why-grid, .approach-grid, .faq-grid, .industries-grid, .testimonials-grid').forEach(grid => {
+        staggerObserver.observe(grid);
+    });
+
+    // Navbar background on scroll
+    const navbar = document.querySelector('.navbar');
+    let lastScroll = 0;
     
-    if (currentScroll > 100) {
-        navbar.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.08)';
-    } else {
-        navbar.style.boxShadow = 'none';
-    }
-    
-    lastScroll = currentScroll;
+    window.addEventListener('scroll', () => {
+        const currentScroll = window.scrollY;
+        
+        if (currentScroll > 100) {
+            navbar.style.boxShadow = '0 1px 12px rgba(0,0,0,0.06)';
+        } else {
+            navbar.style.boxShadow = 'none';
+        }
+        
+        lastScroll = currentScroll;
+    }, { passive: true });
 });
