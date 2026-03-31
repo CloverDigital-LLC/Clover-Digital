@@ -525,6 +525,78 @@ const WhyPrairieSection = () => {
   );
 };
 
+
+const TeamSection = () => {
+  const team = [
+    {
+      name: 'Mason Cagnoni',
+      title: 'Co-Founder',
+      bio: 'Started on Wall Street at Deutsche Bank before moving into operations and ecosystem building. Currently leads a technology ecosystem where partner businesses generated over $37 million in revenue last year. Now bringing that same playbook to Main Street.',
+      linkedin: 'https://www.linkedin.com/in/mason-cagnoni-18906049/',
+    },
+    {
+      name: 'Shannon Sweeney Offen',
+      title: 'Co-Founder',
+      bio: 'Background in investment banking and venture. Experienced in financial strategy, deal structuring, and building businesses from the ground up.',
+      linkedin: 'https://www.linkedin.com/in/shannon-sweeney-offen/',
+    },
+    {
+      name: 'Jasper',
+      title: 'Co-Founder',
+      bio: 'Technical architect behind Prairie Digital\'s infrastructure. Builds the systems that make our digital employees reliable, smart, and seamlessly integrated with client operations.',
+      linkedin: '#',
+    },
+    {
+      name: 'Dan',
+      title: 'Co-Founder',
+      bio: 'Handles product development and client experience. Focused on making sure every digital employee we deploy actually works the way a real team member should.',
+      linkedin: '#',
+    },
+  ];
+
+  return (
+    <section className="py-24 md:py-32 px-6 relative" style={{ backgroundColor: '#F9F6F0' }}>
+      <div className="max-w-7xl mx-auto">
+        <RevealDiv className="text-center mb-20">
+          <span className="font-bold tracking-widest uppercase text-sm mb-4 block" style={{ color: '#8B7355' }}>Our Team</span>
+          <h2 className="font-serif text-4xl md:text-5xl mb-6" style={{ color: '#2C3E2D' }}>Real people behind every digital employee.</h2>
+        </RevealDiv>
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-10 max-w-5xl mx-auto">
+          {team.map((member, i) => (
+            <RevealDiv
+              key={i}
+              className="bg-white rounded-[2rem] p-8 md:p-10 border transition-all duration-300 hover:-translate-y-1"
+              style={{ boxShadow: '0 10px 40px -10px rgba(44, 62, 45, 0.08)', borderColor: 'rgba(238,242,236,0.5)' }}
+              delay={i * 100}
+            >
+              <div className="flex items-center gap-4 mb-5">
+                <div className="w-14 h-14 rounded-full flex items-center justify-center font-serif text-xl font-bold" style={{ backgroundColor: i % 2 === 0 ? 'rgba(212,175,55,0.15)' : 'rgba(123,163,129,0.2)', color: i % 2 === 0 ? '#B8962B' : '#587a5e' }}>
+                  {member.name.split(' ').map(n => n[0]).join('')}
+                </div>
+                <div>
+                  <h3 className="font-serif text-xl mb-0" style={{ color: '#2C3E2D' }}>{member.name}</h3>
+                  <span className="text-sm font-semibold tracking-wide uppercase" style={{ color: '#8B7355' }}>{member.title}</span>
+                </div>
+              </div>
+              <p className="text-base leading-relaxed mb-4" style={{ color: '#4A5548' }}>{member.bio}</p>
+              {member.linkedin !== '#' && (
+                <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold transition-colors duration-200" style={{ color: '#8B7355' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#D4AF37'; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = '#8B7355'; }}>
+                  <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" />
+                  </svg>
+                  LinkedIn
+                </a>
+              )}
+            </RevealDiv>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const IndustriesSection = () => {
   const industries = ['Home Services', 'Law Firms', 'Clinics & Medical', 'Real Estate', 'Boutiques', 'Creative Agencies'];
   return (
@@ -918,6 +990,7 @@ const HomePage = () => {
       <NotJustSoftwareSection />
       <MathSection />
       <WhyPrairieSection />
+      <TeamSection />
       <IndustriesSection />
       <FAQSection />
       <CTASection onBook={() => setShowBookCall(true)} />
