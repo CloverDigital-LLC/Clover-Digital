@@ -529,25 +529,25 @@ const WhyPrairieSection = () => {
 const TeamSection = () => {
   const team = [
     {
-      name: 'Mason Cagnoni',
-      title: 'Co-Founder',
-      bio: 'Started on Wall Street at Deutsche Bank before moving into operations and ecosystem building. Currently leads a technology ecosystem where partner businesses generated over $37 million in revenue last year. Now bringing that same playbook to Main Street.',
-      linkedin: 'https://www.linkedin.com/in/mason-cagnoni-18906049/',
-      logos: [
-        { name: 'Deutsche Bank', src: '/logos/deutsche-bank.png' },
-        { name: 'DePaul University', src: '/logos/depaul.png' },
-      ],
-    },
-    {
       name: 'Shannon Sweeney Offen',
       title: 'Co-Founder',
       bio: 'Over 20 years in capital markets leadership at J.P. Morgan, Citi, and Comerica Bank. Harvard-educated with deep expertise in growth strategy, financial operations, and building high-performing teams. Brings Wall Street rigor to small business operations.',
       linkedin: 'https://www.linkedin.com/in/shannon-sweeney-offen/',
       logos: [
-        { name: 'J.P. Morgan', src: '/logos/jpmorgan.png' },
-        { name: 'Citi', src: '/logos/citi.png' },
-        { name: 'Comerica', src: '/logos/comerica.png' },
-        { name: 'Harvard', src: '/logos/harvard.png' },
+        { name: 'J.P. Morgan', src: '/logos/jpmorgan.svg' },
+        { name: 'Citi', src: '/logos/citi.svg' },
+        { name: 'Comerica', src: '/logos/comerica.svg' },
+        { name: 'Harvard', src: '/logos/harvard.svg' },
+      ],
+    },
+    {
+      name: 'Mason Cagnoni',
+      title: 'Co-Founder',
+      bio: 'Started on Wall Street at Deutsche Bank before moving into operations and ecosystem building. Currently leads a technology ecosystem where partner businesses generated over $37 million in revenue last year. Now bringing that same playbook to Main Street.',
+      linkedin: 'https://www.linkedin.com/in/mason-cagnoni-18906049/',
+      logos: [
+        { name: 'Deutsche Bank', src: '/logos/deutsche-bank.svg' },
+        { name: 'DePaul', src: '/logos/depaul.svg' },
       ],
     },
   ];
@@ -577,11 +577,10 @@ const TeamSection = () => {
                 </div>
               </div>
               <p className="text-base leading-relaxed mb-5" style={{ color: '#4A5548' }}>{member.bio}</p>
-              <div className="flex flex-wrap items-center gap-3 mb-4">
+              <div className="flex flex-wrap items-center gap-3 mb-4 pt-2 border-t" style={{ borderColor: '#EEF2EC' }}>
                 {member.logos.map((logo, j) => (
-                  <div key={j} className="flex items-center gap-2 px-3 py-1.5 rounded-lg border" style={{ backgroundColor: '#F9F6F0', borderColor: '#DEE6DC' }}>
-                    <img src={logo.src} alt={logo.name} className="w-5 h-5 object-contain" style={{ filter: 'grayscale(30%)' }} />
-                    <span className="text-xs font-bold tracking-wide" style={{ color: '#2C3E2D' }}>{logo.name}</span>
+                  <div key={j} className="h-7 flex items-center" style={{ opacity: 0.6 }}>
+                    <img src={logo.src} alt={logo.name} className="h-full w-auto object-contain" style={{ maxWidth: '100px' }} />
                   </div>
                 ))}
               </div>
