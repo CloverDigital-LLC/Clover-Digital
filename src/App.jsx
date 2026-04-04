@@ -31,18 +31,32 @@ const customStyles = {
     pointerEvents: 'none',
     zIndex: 2,
   },
-  reveal: {
-    opacity: 0,
-    transform: 'translateY(40px)',
-    transition: 'all 1s cubic-bezier(0.16, 1, 0.3, 1)',
+};
+
+const revealVariants = {
+  up: {
+    hidden: { opacity: 0, transform: 'translateY(40px)' },
+    visible: { opacity: 1, transform: 'translateY(0)' },
   },
-  revealActive: {
-    opacity: 1,
-    transform: 'translateY(0)',
+  left: {
+    hidden: { opacity: 0, transform: 'translateX(-50px)' },
+    visible: { opacity: 1, transform: 'translateX(0)' },
+  },
+  right: {
+    hidden: { opacity: 0, transform: 'translateX(50px)' },
+    visible: { opacity: 1, transform: 'translateX(0)' },
+  },
+  scale: {
+    hidden: { opacity: 0, transform: 'scale(0.92)' },
+    visible: { opacity: 1, transform: 'scale(1)' },
+  },
+  fade: {
+    hidden: { opacity: 0, transform: 'none' },
+    visible: { opacity: 1, transform: 'none' },
   },
 };
 
-const useReveal = () => {
+const useReveal = (threshold = 0.1) => {
   const ref = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -57,7 +71,7 @@ const useReveal = () => {
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold }
     );
     observer.observe(el);
     const rect = el.getBoundingClientRect();
@@ -70,15 +84,17 @@ const useReveal = () => {
   return { ref, isVisible };
 };
 
-const RevealDiv = ({ children, className, style, delay = 0 }) => {
+const RevealDiv = ({ children, className, style, delay = 0, variant = 'up', duration = 1 }) => {
   const { ref, isVisible } = useReveal();
+  const v = revealVariants[variant] || revealVariants.up;
   return (
     <div
       ref={ref}
       className={className}
       style={{
-        ...customStyles.reveal,
-        ...(isVisible ? customStyles.revealActive : {}),
+        ...v.hidden,
+        ...(isVisible ? v.visible : {}),
+        transition: `all ${duration}s cubic-bezier(0.16, 1, 0.3, 1)`,
         transitionDelay: `${delay}ms`,
         ...style,
       }}
@@ -207,7 +223,7 @@ const HeroSection = ({ onGetStarted, onSeeHow }) => {
 const QuoteSection = () => {
   return (
     <section className="py-20 md:py-32 px-6 relative z-30 -mt-10" style={{ backgroundColor: '#EEF2EC' }}>
-      <RevealDiv className="max-w-4xl mx-auto text-center">
+      <RevealDiv className="max-w-4xl mx-auto text-center" variant="scale" duration={1.2}>
         <svg className="w-12 h-12 mx-auto mb-8 opacity-80" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#7ba381" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
           <path d="M12 16v-4" />
@@ -234,7 +250,7 @@ const HowItWorksSection = () => {
         <div className="grid md:grid-cols-3 gap-8 lg:gap-12 relative">
           <div className="hidden md:block absolute top-[45px] left-[15%] right-[15%] h-[2px] z-0" style={{ backgroundColor: '#DEE6DC' }}></div>
 
-          <RevealDiv className="relative z-10 bg-white rounded-[2rem] p-10 border hover:-translate-y-1.5 transition-all duration-300 cursor-default" style={{ boxShadow: '0 10px 40px -10px rgba(44, 62, 45, 0.08)', borderColor: 'rgba(238,242,236,0.5)' }} delay={0}>
+          <RevealDiv variant="left" className="relative z-10 bg-white rounded-[2rem] p-10 border hover:-translate-y-1.5 transition-all duration-300 cursor-default" style={{ boxShadow: '0 10px 40px -10px rgba(44, 62, 45, 0.08)', borderColor: 'rgba(238,242,236,0.5)' }} delay={0}>
             <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-8 shadow-sm mx-auto md:mx-0 border-2" style={{ backgroundColor: '#F9F6F0', borderColor: '#DEE6DC', transform: 'rotate(-3deg)' }}>
               <span className="font-serif text-2xl font-bold" style={{ color: '#8B7355' }}>1</span>
             </div>
@@ -242,7 +258,7 @@ const HowItWorksSection = () => {
             <p className="leading-relaxed text-lg text-center md:text-left" style={{ color: '#4A5548' }}>We sit down with you to learn exactly how your business operates, what tasks are slowing you down, and importantly, your brand's unique tone of voice.</p>
           </RevealDiv>
 
-          <RevealDiv className="relative z-10 bg-white rounded-[2rem] p-10 border hover:-translate-y-1.5 transition-all duration-300 cursor-default" style={{ boxShadow: '0 10px 40px -10px rgba(44, 62, 45, 0.08)', borderColor: 'rgba(238,242,236,0.5)' }} delay={150}>
+          <RevealDiv variant="up" className="relative z-10 bg-white rounded-[2rem] p-10 border hover:-translate-y-1.5 transition-all duration-300 cursor-default" style={{ boxShadow: '0 10px 40px -10px rgba(44, 62, 45, 0.08)', borderColor: 'rgba(238,242,236,0.5)' }} delay={150}>
             <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-8 shadow-sm mx-auto md:mx-0 border-2" style={{ backgroundColor: 'rgba(212,175,55,0.1)', borderColor: 'rgba(212,175,55,0.2)', transform: 'rotate(3deg)' }}>
               <span className="font-serif text-2xl font-bold" style={{ color: '#B8962B' }}>2</span>
             </div>
@@ -250,7 +266,7 @@ const HowItWorksSection = () => {
             <p className="leading-relaxed text-lg text-center md:text-left" style={{ color: '#4A5548' }}>Our engineers build and train your digital employee on your specific pricing models, calendar availability, FAQs, and internal processes behind the scenes.</p>
           </RevealDiv>
 
-          <RevealDiv className="relative z-10 bg-white rounded-[2rem] p-10 border hover:-translate-y-1.5 transition-all duration-300 cursor-default" style={{ boxShadow: '0 10px 40px -10px rgba(44, 62, 45, 0.08)', borderColor: 'rgba(238,242,236,0.5)' }} delay={300}>
+          <RevealDiv variant="right" className="relative z-10 bg-white rounded-[2rem] p-10 border hover:-translate-y-1.5 transition-all duration-300 cursor-default" style={{ boxShadow: '0 10px 40px -10px rgba(44, 62, 45, 0.08)', borderColor: 'rgba(238,242,236,0.5)' }} delay={300}>
             <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-8 shadow-sm mx-auto md:mx-0 border-2" style={{ backgroundColor: 'rgba(123,163,129,0.1)', borderColor: 'rgba(123,163,129,0.2)', transform: 'rotate(-3deg)' }}>
               <span className="font-serif text-2xl font-bold" style={{ color: '#587a5e' }}>3</span>
             </div>
@@ -346,6 +362,7 @@ const CapabilitiesSection = () => {
           {capabilities.map((cap, i) => (
             <RevealDiv
               key={i}
+              variant={i % 3 === 0 ? 'left' : i % 3 === 1 ? 'up' : 'right'}
               className="backdrop-blur-sm border rounded-[2rem] p-8 transition-all duration-300 group cursor-default"
               style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.2)' }}
               delay={cap.delay}
@@ -400,12 +417,12 @@ const NotJustSoftwareSection = () => {
   return (
     <section className="py-24 md:py-32 px-6" style={{ backgroundColor: '#F9F6F0' }}>
       <div className="max-w-7xl mx-auto">
-        <RevealDiv>
+        <RevealDiv variant="fade" duration={1.4}>
           <h2 className="font-serif text-4xl md:text-5xl text-center mb-20" style={{ color: '#2C3E2D' }}>This is not just another software tool.</h2>
         </RevealDiv>
         <div className="grid md:grid-cols-3 gap-12 lg:gap-16">
           {items.map((item, i) => (
-            <RevealDiv key={i} className="text-center md:text-left" delay={item.delay}>
+            <RevealDiv key={i} variant={i === 0 ? 'left' : i === 1 ? 'up' : 'right'} className="text-center md:text-left" delay={item.delay}>
               <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto md:mx-0 shadow-sm border" style={{ backgroundColor: '#EEF2EC', borderColor: '#DEE6DC' }}>
                 {item.icon}
               </div>
@@ -423,7 +440,7 @@ const MathSection = () => {
   return (
     <section className="py-24 md:py-32 px-6 relative overflow-hidden" style={{ backgroundColor: '#3A5240' }}>
       <div className="max-w-6xl mx-auto relative z-10">
-        <RevealDiv>
+        <RevealDiv variant="scale" duration={1.2}>
           <h2 className="font-serif text-4xl md:text-5xl text-white text-center mb-16">The math makes sense.</h2>
           <div className="backdrop-blur-sm rounded-[2.5rem] border overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.2)' }}>
             <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x" style={{ borderColor: 'rgba(255,255,255,0.2)' }}>
@@ -509,7 +526,7 @@ const WhyPrairieSection = () => {
         </RevealDiv>
         <div className="grid md:grid-cols-2 gap-x-12 gap-y-16 lg:gap-x-20">
           {items.map((item, i) => (
-            <RevealDiv key={i} className="flex gap-6 lg:gap-8" delay={item.delay}>
+            <RevealDiv key={i} variant={i % 2 === 0 ? 'left' : 'right'} className="flex gap-6 lg:gap-8" delay={item.delay}>
               <div className="flex-shrink-0 w-14 h-14 border rounded-2xl flex items-center justify-center shadow-sm" style={{ backgroundColor: '#EEF2EC', borderColor: '#DEE6DC' }}>
                 {item.icon}
               </div>
@@ -526,7 +543,14 @@ const WhyPrairieSection = () => {
 };
 
 const IndustriesSection = () => {
-  const industries = ['Home Services', 'Law Firms', 'Clinics & Medical', 'Real Estate', 'Boutiques', 'Creative Agencies'];
+  const industries = [
+    { name: 'Home Services', href: '/for/home-services.html' },
+    { name: 'Law Firms', href: '/for/law-firms.html' },
+    { name: 'Clinics & Medical', href: null },
+    { name: 'Real Estate', href: '/for/real-estate.html' },
+    { name: 'Boutiques', href: null },
+    { name: 'Creative Agencies', href: '/for/creative-agencies.html' },
+  ];
   return (
     <section className="py-16 px-6 relative overflow-hidden border-y" style={{ backgroundColor: '#2F4A35', borderColor: 'rgba(255,255,255,0.1)' }}>
       <div className="max-w-7xl mx-auto relative z-10">
@@ -536,14 +560,26 @@ const IndustriesSection = () => {
         <div className="flex flex-wrap justify-center gap-4 md:gap-5">
           {industries.map((ind, i) => (
             <RevealDiv key={i} delay={i * 50}>
-              <div
-                className="backdrop-blur-md border px-8 py-3.5 rounded-full text-white text-base font-medium tracking-wide transition-all duration-300 hover:-translate-y-0.5 shadow-sm cursor-default"
-                style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.2)' }}
-                onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.2)'; }}
-                onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'; }}
-              >
-                {ind}
-              </div>
+              {ind.href ? (
+                <a
+                  href={ind.href}
+                  className="backdrop-blur-md border px-8 py-3.5 rounded-full text-white text-base font-medium tracking-wide transition-all duration-300 hover:-translate-y-0.5 shadow-sm block no-underline"
+                  style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.2)', textDecoration: 'none' }}
+                  onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.2)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'; }}
+                >
+                  {ind.name}
+                </a>
+              ) : (
+                <div
+                  className="backdrop-blur-md border px-8 py-3.5 rounded-full text-white text-base font-medium tracking-wide transition-all duration-300 hover:-translate-y-0.5 shadow-sm cursor-default"
+                  style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.2)' }}
+                  onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.2)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'; }}
+                >
+                  {ind.name}
+                </div>
+              )}
             </RevealDiv>
           ))}
         </div>
@@ -580,7 +616,7 @@ const FAQSection = () => {
         </RevealDiv>
         <div className="space-y-8">
           {faqs.map((faq, i) => (
-            <RevealDiv key={i} delay={i * 100}>
+            <RevealDiv key={i} variant={i % 2 === 0 ? 'left' : 'right'} delay={i * 100}>
               <div className="bg-white rounded-3xl p-8 md:p-10 border" style={{ boxShadow: '0 10px 40px -10px rgba(44, 62, 45, 0.08)', borderColor: 'rgba(238,242,236,0.5)' }}>
                 <h4 className="font-serif text-2xl mb-4 font-medium" style={{ color: '#2C3E2D' }}>{faq.q}</h4>
                 <p className="text-lg leading-relaxed" style={{ color: '#4A5548' }}>{faq.a}</p>
@@ -604,7 +640,7 @@ const CTASection = ({ onBook }) => {
         <circle cx="12" cy="12" r="10" />
       </svg>
       <div className="relative z-10 max-w-3xl mx-auto">
-        <RevealDiv>
+        <RevealDiv variant="scale" duration={1.2}>
           <h2 className="font-serif text-5xl md:text-6xl text-white mb-8">Ready to grow your team?</h2>
           <p className="text-xl mb-12 font-light leading-relaxed max-w-2xl mx-auto" style={{ color: 'rgba(255,255,255,0.9)' }}>Book a short discovery call. We'll chat about your bottlenecks and see if a digital employee is the right fit. No pressure, no hard sell.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
@@ -637,15 +673,15 @@ const Footer = () => {
           </div>
           <p className="text-base max-w-sm leading-relaxed mb-6">Reliable digital employees for small businesses across the heartland. We handle the work so you can focus on what matters.</p>
           <div className="flex gap-4">
-            <a href="#" className="w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+            <a href="mailto:hello@prairie-digital.com" className="w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
               onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#D4AF37'; e.currentTarget.style.color = 'white'; }}
               onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = ''; }}>
-              <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg>
+              <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" /></svg>
             </a>
-            <a href="#" className="w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+            <a href="tel:+12173034601" className="w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
               onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#D4AF37'; e.currentTarget.style.color = 'white'; }}
               onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = ''; }}>
-              <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" /></svg>
+              <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
             </a>
           </div>
         </div>
@@ -653,16 +689,21 @@ const Footer = () => {
         <div>
           <h5 className="font-semibold mb-6 font-serif text-lg tracking-wide" style={{ color: '#F9F6F0' }}>Company</h5>
           <ul className="space-y-4 text-base">
-            {['About Us', 'How it Works', 'Capabilities', 'Pricing Structure'].map((item, i) => (
+            {[
+              { label: 'How it Works', href: '#how-it-works' },
+              { label: 'Capabilities', href: '#capabilities' },
+              { label: 'Industries', href: '/blog/#industries' },
+              { label: 'Blog', href: '/blog/' },
+            ].map((item, i) => (
               <li key={i}>
                 <a
-                  href={item === 'How it Works' ? '#how-it-works' : item === 'Capabilities' ? '#capabilities' : '#'}
+                  href={item.href}
                   className="transition-colors duration-200 block"
                   style={{ color: 'rgba(238,242,236,0.6)' }}
                   onMouseEnter={e => { e.currentTarget.style.color = '#D4AF37'; }}
                   onMouseLeave={e => { e.currentTarget.style.color = 'rgba(238,242,236,0.6)'; }}
                 >
-                  {item}
+                  {item.label}
                 </a>
               </li>
             ))}
@@ -676,7 +717,7 @@ const Footer = () => {
               <svg className="w-5 h-5 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" />
               </svg>
-              <a href="#" className="transition-colors" style={{ color: 'rgba(238,242,236,0.6)' }}
+              <a href="mailto:hello@prairie-digital.com" className="transition-colors" style={{ color: 'rgba(238,242,236,0.6)' }}
                 onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
                 onMouseLeave={e => { e.currentTarget.style.color = 'rgba(238,242,236,0.6)'; }}>
                 hello@prairie-digital.com
@@ -686,7 +727,11 @@ const Footer = () => {
               <svg className="w-5 h-5 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
               </svg>
-              <span>(217) 303-4601</span>
+              <a href="tel:+12173034601" className="transition-colors" style={{ color: 'rgba(238,242,236,0.6)' }}
+                onMouseEnter={e => { e.currentTarget.style.color = 'white'; }}
+                onMouseLeave={e => { e.currentTarget.style.color = 'rgba(238,242,236,0.6)'; }}>
+                (217) 303-4601
+              </a>
             </li>
             <li className="flex items-start gap-3">
               <svg className="w-5 h-5 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
