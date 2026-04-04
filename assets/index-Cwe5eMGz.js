@@ -19,6 +19,7 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
         from { transform: translateX(-150px); }
         to { transform: translateX(calc(100vw + 150px)); }
       }
-      html { scroll-behavior: smooth; scroll-snap-type: y proximity; }
-      section, footer { scroll-snap-align: start; }
+      html { scroll-behavior: smooth; scroll-snap-type: y mandatory; overflow-y: scroll; }
+      section { scroll-snap-align: start; }
+      footer { scroll-snap-align: end; }
     `,document.head.appendChild(e),()=>document.head.removeChild(e)},[]),(0,A.jsx)(Sn,{basename:`/`,children:(0,A.jsxs)(Ft,{children:[(0,A.jsx)(Nt,{path:`/`,element:(0,A.jsx)(ur,{})}),(0,A.jsx)(Nt,{path:`*`,element:(0,A.jsx)(ur,{})})]})})),{})}));

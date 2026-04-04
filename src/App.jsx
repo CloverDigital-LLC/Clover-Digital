@@ -1025,8 +1025,9 @@ const App = () => {
         from { transform: translateX(-150px); }
         to { transform: translateX(calc(100vw + 150px)); }
       }
-      html { scroll-behavior: smooth; scroll-snap-type: y proximity; }
-      section, footer { scroll-snap-align: start; }
+      html { scroll-behavior: smooth; scroll-snap-type: y mandatory; overflow-y: scroll; }
+      section { scroll-snap-align: start; }
+      footer { scroll-snap-align: end; }
     `;
     document.head.appendChild(style);
     return () => document.head.removeChild(style);
