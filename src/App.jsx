@@ -546,9 +546,7 @@ const IndustriesSection = () => {
   const industries = [
     { name: 'Home Services', href: '/for/home-services.html' },
     { name: 'Law Firms', href: '/for/law-firms.html' },
-    { name: 'Clinics & Medical', href: null },
     { name: 'Real Estate', href: '/for/real-estate.html' },
-    { name: 'Boutiques', href: null },
     { name: 'Creative Agencies', href: '/for/creative-agencies.html' },
   ];
   return (
@@ -746,11 +744,11 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto border-t pt-8 flex flex-col md:flex-row justify-between items-center text-sm" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
         <p>© 2026 Prairie Digital LLC. All rights reserved.</p>
         <div className="flex gap-6 mt-4 md:mt-0">
-          {['Privacy Policy', 'Terms of Service'].map((item, i) => (
-            <a key={i} href="#" className="transition-colors"
-              onMouseEnter={e => { e.currentTarget.style.color = '#F9F6F0'; }}
-              onMouseLeave={e => { e.currentTarget.style.color = ''; }}>
-              {item}
+        {[{ label: 'Privacy Policy', href: '/privacy-policy.html' }, { label: 'Terms of Service', href: '/terms-of-service.html' }].map((item, i) => (
+          <a key={i} href={item.href} className="transition-colors" style={{ color: 'rgba(238,242,236,0.6)', textDecoration: 'none' }}
+            onMouseEnter={e => { e.currentTarget.style.color = COLORS.cream; }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'rgba(238,242,236,0.6)'; }}>
+            {item.label}
             </a>
           ))}
         </div>
