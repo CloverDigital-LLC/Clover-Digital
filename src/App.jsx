@@ -220,23 +220,6 @@ const HeroSection = ({ onGetStarted, onSeeHow }) => {
   );
 };
 
-const QuoteSection = () => {
-  return (
-    <section className="py-20 md:py-32 px-6 relative z-30 -mt-10" style={{ backgroundColor: '#EEF2EC' }}>
-      <RevealDiv className="max-w-4xl mx-auto text-center" variant="scale" duration={1.2}>
-        <svg className="w-12 h-12 mx-auto mb-8 opacity-80" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#7ba381" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
-          <path d="M12 16v-4" />
-          <path d="M12 8h.01" />
-        </svg>
-        <h2 className="font-serif text-3xl md:text-[2.75rem] leading-tight md:leading-snug font-medium" style={{ color: '#2C3E2D' }}>
-          "We believe small businesses deserve the same operational power as the giants. Without the headache."
-        </h2>
-      </RevealDiv>
-    </section>
-  );
-};
-
 const HowItWorksSection = () => {
   return (
     <section id="how-it-works" className="py-24 md:py-32 px-6 border-t" style={{ backgroundColor: '#F9F6F0', borderColor: 'rgba(222,230,220,0.5)' }}>
@@ -290,7 +273,6 @@ const CapabilitiesSection = () => {
       iconBg: 'rgba(212,175,55,0.2)',
       title: 'Operations Management',
       description: 'Runs your daily operations end to end. Manages schedules, coordinates between teams, tracks deadlines, and makes sure nothing falls through the cracks.',
-      delay: 0,
     },
     {
       icon: (
@@ -301,7 +283,6 @@ const CapabilitiesSection = () => {
       iconBg: 'rgba(123,163,129,0.3)',
       title: 'Client Relationship Management',
       description: 'Builds and maintains client relationships at scale. Remembers every detail, follows up at the right time, and keeps your clients feeling like your only client.',
-      delay: 100,
     },
     {
       icon: (
@@ -312,7 +293,6 @@ const CapabilitiesSection = () => {
       iconBg: 'rgba(212,175,55,0.2)',
       title: 'Business Development',
       description: 'Works your pipeline from first touch to close. Qualifies opportunities, nurtures prospects, prepares proposals, and keeps your revenue engine running.',
-      delay: 200,
     },
     {
       icon: (
@@ -323,7 +303,6 @@ const CapabilitiesSection = () => {
       iconBg: 'rgba(123,163,129,0.3)',
       title: 'Administrative Operations',
       description: 'Handles the back-office work that eats your week. Communications, document management, vendor coordination, compliance tracking, and reporting.',
-      delay: 300,
     },
     {
       icon: (
@@ -334,7 +313,6 @@ const CapabilitiesSection = () => {
       iconBg: 'rgba(212,175,55,0.2)',
       title: 'Financial Operations',
       description: 'Manages invoicing, expense tracking, payment follow-ups, and financial reporting. Keeps your books organized and your cash flow visible.',
-      delay: 400,
     },
     {
       icon: (
@@ -345,34 +323,137 @@ const CapabilitiesSection = () => {
       iconBg: 'rgba(123,163,129,0.3)',
       title: 'Process Automation',
       description: 'Takes your most time-consuming multi-step processes and runs them flawlessly. The workflows unique to your business that no off-the-shelf software can handle.',
-      delay: 500,
     },
   ];
+
+  const scrollRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const getVisibleCount = () => {
+    if (typeof window === 'undefined') return 3;
+    if (window.innerWidth < 768) return 1;
+    if (window.innerWidth < 1024) return 2;
+    return 3;
+  };
+
+  const [visibleCount, setVisibleCount] = useState(3);
+
+  useEffect(() => {
+    const update = () => setVisibleCount(getVisibleCount());
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  const maxIndex = Math.max(0, capabilities.length - visibleCount);
+
+  const scrollTo = (index) => {
+    const clamped = Math.max(0, Math.min(index, maxIndex));
+    setActiveIndex(clamped);
+    const container = scrollRef.current;
+    if (!container) return;
+    const cardWidth = container.scrollWidth / capabilities.length;
+    container.scrollTo({ left: cardWidth * clamped, behavior: 'smooth' });
+  };
+
+  const handleScroll = () => {
+    const container = scrollRef.current;
+    if (!container) return;
+    const cardWidth = container.scrollWidth / capabilities.length;
+    const newIndex = Math.round(container.scrollLeft / cardWidth);
+    setActiveIndex(Math.max(0, Math.min(newIndex, maxIndex)));
+  };
 
   return (
     <section id="capabilities" className="py-24 md:py-32 px-6 relative overflow-hidden" style={{ backgroundColor: '#3A5240' }}>
       <div className="max-w-7xl mx-auto relative z-10">
-        <RevealDiv className="text-center mb-20">
+        <RevealDiv className="text-center mb-16">
           <span className="font-bold tracking-widest uppercase text-sm mb-4 block" style={{ color: '#A8C8A8' }}>Capabilities</span>
           <h2 className="font-serif text-4xl md:text-5xl text-white mb-6">What can they do?</h2>
           <p className="text-xl max-w-2xl mx-auto font-light leading-relaxed" style={{ color: 'rgba(255,255,255,0.9)' }}>From running your day-to-day operations to managing complex client relationships, they handle the workflows that actually move your business forward.</p>
         </RevealDiv>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {capabilities.map((cap, i) => (
-            <RevealDiv
+        <div className="relative">
+          {/* Left Arrow */}
+          <button
+            onClick={() => scrollTo(activeIndex - 1)}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-5 z-20 w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all duration-300"
+            style={{
+              backgroundColor: activeIndex === 0 ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.2)',
+              opacity: activeIndex === 0 ? 0.4 : 1,
+              cursor: activeIndex === 0 ? 'default' : 'pointer',
+            }}
+            disabled={activeIndex === 0}
+          >
+            <svg className="w-5 h-5 md:w-6 md:h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+
+          {/* Right Arrow */}
+          <button
+            onClick={() => scrollTo(activeIndex + 1)}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-5 z-20 w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all duration-300"
+            style={{
+              backgroundColor: activeIndex >= maxIndex ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.2)',
+              opacity: activeIndex >= maxIndex ? 0.4 : 1,
+              cursor: activeIndex >= maxIndex ? 'default' : 'pointer',
+            }}
+            disabled={activeIndex >= maxIndex}
+          >
+            <svg className="w-5 h-5 md:w-6 md:h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+
+          {/* Scrollable container */}
+          <div
+            ref={scrollRef}
+            onScroll={handleScroll}
+            className="flex gap-6 overflow-x-auto px-2"
+            style={{
+              scrollSnapType: 'x mandatory',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+              WebkitOverflowScrolling: 'touch',
+            }}
+          >
+            <style>{`#cap-scroll::-webkit-scrollbar { display: none; }`}</style>
+            {capabilities.map((cap, i) => (
+              <div
+                key={i}
+                className="backdrop-blur-sm border rounded-[2rem] p-8 transition-all duration-300 group cursor-default flex-shrink-0"
+                style={{
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  borderColor: 'rgba(255,255,255,0.2)',
+                  scrollSnapAlign: 'start',
+                  width: visibleCount === 1 ? '100%' : visibleCount === 2 ? 'calc(50% - 12px)' : 'calc(33.333% - 16px)',
+                  minWidth: visibleCount === 1 ? '100%' : visibleCount === 2 ? 'calc(50% - 12px)' : 'calc(33.333% - 16px)',
+                }}
+              >
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: cap.iconBg }}>
+                  {cap.icon}
+                </div>
+                <h3 className="font-serif text-2xl text-white mb-3">{cap.title}</h3>
+                <p className="text-lg leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)' }}>{cap.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Dot indicators */}
+        <div className="flex justify-center gap-2 mt-8">
+          {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+            <button
               key={i}
-              variant={i % 3 === 0 ? 'left' : i % 3 === 1 ? 'up' : 'right'}
-              className="backdrop-blur-sm border rounded-[2rem] p-8 transition-all duration-300 group cursor-default"
-              style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.2)' }}
-              delay={cap.delay}
-            >
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: cap.iconBg }}>
-                {cap.icon}
-              </div>
-              <h3 className="font-serif text-2xl text-white mb-3">{cap.title}</h3>
-              <p className="text-lg leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)' }}>{cap.description}</p>
-            </RevealDiv>
+              onClick={() => scrollTo(i)}
+              className="rounded-full transition-all duration-300"
+              style={{
+                width: activeIndex === i ? '24px' : '8px',
+                height: '8px',
+                backgroundColor: activeIndex === i ? '#D4AF37' : 'rgba(255,255,255,0.3)',
+              }}
+            />
           ))}
         </div>
       </div>
@@ -380,61 +461,7 @@ const CapabilitiesSection = () => {
   );
 };
 
-const NotJustSoftwareSection = () => {
-  const items = [
-    {
-      icon: (
-        <svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#8B7355" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
-        </svg>
-      ),
-      title: 'No Dashboards',
-      desc: "You don't need to learn a complicated new interface. Your digital employee communicates directly with you via email or text, just like a human assistant would.",
-      delay: 0,
-    },
-    {
-      icon: (
-        <svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#8B7355" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
-        </svg>
-      ),
-      title: 'Zero Setup Time',
-      desc: 'Traditional software requires you to set it up. We act as your IT department, handling all the technical configuration and setup before handover.',
-      delay: 150,
-    },
-    {
-      icon: (
-        <svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#8B7355" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-        </svg>
-      ),
-      title: 'Adapts to You',
-      desc: 'It seamlessly plugs into the tools you already use every day. If you use Google Workspace, ServiceTitan, or specific CRMs, your employee learns to use them too.',
-      delay: 300,
-    },
-  ];
 
-  return (
-    <section className="py-24 md:py-32 px-6" style={{ backgroundColor: '#F9F6F0' }}>
-      <div className="max-w-7xl mx-auto">
-        <RevealDiv variant="fade" duration={1.4}>
-          <h2 className="font-serif text-4xl md:text-5xl text-center mb-20" style={{ color: '#2C3E2D' }}>This is not just another software tool.</h2>
-        </RevealDiv>
-        <div className="grid md:grid-cols-3 gap-12 lg:gap-16">
-          {items.map((item, i) => (
-            <RevealDiv key={i} variant={i === 0 ? 'left' : i === 1 ? 'up' : 'right'} className="text-center md:text-left" delay={item.delay}>
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto md:mx-0 shadow-sm border" style={{ backgroundColor: '#EEF2EC', borderColor: '#DEE6DC' }}>
-                {item.icon}
-              </div>
-              <h3 className="font-serif text-2xl mb-4" style={{ color: '#2C3E2D' }}>{item.title}</h3>
-              <p className="text-lg leading-relaxed" style={{ color: '#4A5548' }}>{item.desc}</p>
-            </RevealDiv>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
 
 const MathSection = () => {
   return (
@@ -492,28 +519,34 @@ const MathSection = () => {
 const WhyPrairieSection = () => {
   const items = [
     {
+      icon: <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#8B7355" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>,
+      title: 'No Dashboards',
+      desc: "You don't need to learn a complicated new interface. Your digital employee communicates directly with you via email or text, just like a human assistant would.",
+      delay: 0,
+    },
+    {
+      icon: <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#8B7355" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>,
+      title: 'Zero Setup Time',
+      desc: 'Traditional software requires you to set it up. We act as your IT department, handling all the technical configuration and setup before handover.',
+      delay: 100,
+    },
+    {
       icon: <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#8B7355" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>,
       title: 'Human-in-the-loop monitoring',
       desc: "We don't just set it and forget it. Our dedicated team regularly monitors interactions to ensure exceptional quality and continuous improvement.",
-      delay: 0,
+      delay: 200,
     },
     {
       icon: <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#8B7355" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>,
       title: 'Secure & Private',
       desc: 'Your data is locked down. We use enterprise-grade security and your private business information is never shared or used for anything other than serving your business.',
-      delay: 150,
+      delay: 300,
     },
     {
       icon: <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#8B7355" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><line x1="2" y1="10" x2="22" y2="10" /></svg>,
       title: 'Simple Pricing',
       desc: 'One flat monthly fee. No complex usage tiers, no surprise overage charges, and no hidden setup costs. Predictable costs for predictable results.',
-      delay: 300,
-    },
-    {
-      icon: <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#8B7355" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" /></svg>,
-      title: 'Steady Growth',
-      desc: 'Your digital employee gets smarter over time. We regularly push updates to their capabilities as your business evolves and grows.',
-      delay: 450,
+      delay: 400,
     },
   ];
 
@@ -993,12 +1026,10 @@ const HomePage = () => {
     <div style={{ backgroundColor: '#F9F6F0', color: '#4A5548' }}>
       <Nav onGetStarted={() => setShowGetStarted(true)} />
       <HeroSection onGetStarted={() => setShowGetStarted(true)} onSeeHow={scrollToHowItWorks} />
-      <QuoteSection />
       <HowItWorksSection />
       <CapabilitiesSection />
-      <NotJustSoftwareSection />
-      <MathSection />
       <WhyPrairieSection />
+      <MathSection />
       <IndustriesSection />
       <FAQSection />
       <CTASection onBook={() => setShowBookCall(true)} />
