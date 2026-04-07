@@ -84,7 +84,8 @@ function HomePage() {
         .footer-bottom { flex-direction: column; align-items: flex-start; }
         .footer-grid { gap: 32px; }
         .quote-mark { font-size: 4rem; margin-bottom: -28px; }
-        .landscape { height: 120px; }
+        .landscape { height: 40vh; min-height: 200px; }
+        .landscape svg { display: block; }
       }
     `
     document.head.appendChild(style)

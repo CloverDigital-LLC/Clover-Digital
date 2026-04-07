@@ -291,6 +291,7 @@ section { position: relative; }
   /* Quote mark smaller on mobile */
   .quote-mark { font-size: 4rem; margin-bottom: -28px; }
 
-  /* Flatten hills on mobile - natural flattening via shorter container */
-  .landscape { height: 120px; }
+  /* Hills fill more of hero on tall mobile screens */
+  .landscape { height: 40vh; min-height: 200px; }
+  .landscape svg { display: block; }
 }
