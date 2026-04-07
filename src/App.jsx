@@ -66,6 +66,7 @@ function HomePage() {
         .steps-grid, .cap-grid-desktop, .why-grid { margin-top: 36px; }
         .stats-header, .faq-header { margin-bottom: 36px; }
         .hero { min-height: calc(100vh + env(safe-area-inset-bottom)); min-height: calc(100dvh + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom); }
+        .hero h1 em { display: block; }
         .hero-content { padding: 40px 20px 0; }
         .hero-sub { margin-bottom: 32px; }
         .hero-actions { flex-direction: column; align-items: center; gap: 12px; }
