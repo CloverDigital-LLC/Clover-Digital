@@ -44,6 +44,8 @@ function HomePage() {
   const [navScrolled, setNavScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [openFaq, setOpenFaq] = useState(null)
+  const [capSlide, setCapSlide] = useState(0)
+  const capCarouselRef = useRef(null)
 
   useEffect(() => {
     const onScroll = () => setNavScrolled(window.scrollY > 40)
@@ -61,19 +63,17 @@ function HomePage() {
         .testimonial { padding: 56px 0 64px; }
         .trust { padding: 40px 0 56px; }
         .footer { padding: 48px 0 32px; }
-        .steps-grid, .cap-grid, .why-grid { margin-top: 36px; }
+        .steps-grid, .cap-grid-desktop, .why-grid { margin-top: 36px; }
         .stats-header, .faq-header { margin-bottom: 36px; }
         .hero-content { padding: 40px 20px 0; }
         .hero-sub { margin-bottom: 32px; }
         .hero-actions { flex-direction: column; align-items: center; gap: 12px; }
         .btn-primary, .btn-secondary { width: 100%; max-width: 320px; justify-content: center; }
-        .cloud-4 { display: none; }
-        .cloud-1 { width: 140px; height: 42px; left: 3%; }
-        .cloud-1::before { width: 70px; height: 62px; top: -35px; left: 24px; }
-        .cloud-1::after { width: 84px; height: 54px; top: -26px; left: 56px; }
-        .cloud-2 { width: 120px; height: 36px; right: 5%; }
-        .cloud-2::before { width: 60px; height: 52px; top: -28px; left: 16px; }
-        .cloud-2::after { width: 74px; height: 45px; top: -22px; left: 42px; }
+        .clouds-container { height: 30%; top: 72px; }
+        .cloud-1, .cloud-4 { display: none; }
+        .cloud-2 { width: 100px; height: 30px; top: 30%; right: auto; left: -120px; animation: cloudDrift 25s linear infinite; opacity: 0.85; }
+        .cloud-2::before { width: 50px; height: 44px; top: -24px; left: 14px; }
+        .cloud-2::after { width: 62px; height: 36px; top: -18px; left: 36px; }
         .step-card { padding: 28px 24px; }
         .cap-card { padding: 24px 20px; }
         .why-card { padding: 24px 20px; }
@@ -100,6 +100,34 @@ function HomePage() {
     { q: "What happens if it doesn't know the answer?", a: 'We design "graceful handoffs." If a request is outside its training, complex, or highly sensitive, it politely informs the customer and seamlessly routes the conversation to the right person on your team.' },
     { q: "Will this replace my current staff?", a: "Think of them as a teammate, not a replacement. They handle the repetitive grunt work, data entry, and basic scheduling so your human staff can focus on high-value tasks, strategy, and building real relationships." },
   ]
+
+  const capabilities = [
+    { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" /></svg>, title: 'Operations Management', desc: 'Runs your daily operations end to end. Manages schedules, coordinates between teams, tracks deadlines, and makes sure nothing falls through the cracks.' },
+    { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></svg>, title: 'Client Relationship Management', desc: 'Builds and maintains client relationships at scale. Remembers every detail, follows up at the right time, and keeps your clients feeling like your only client.' },
+    { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>, title: 'Business Development', desc: 'Works your pipeline from first touch to close. Qualifies opportunities, nurtures prospects, prepares proposals, and keeps your revenue engine running.' },
+    { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2" /><rect x="8" y="2" width="8" height="4" rx="1" /><line x1="9" y1="12" x2="15" y2="12" /><line x1="9" y1="16" x2="13" y2="16" /></svg>, title: 'Administrative Operations', desc: 'Handles the back-office work that eats your week. Communications, document management, vendor coordination, compliance tracking, and reporting.' },
+    { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" /></svg>, title: 'Financial Operations', desc: 'Manages invoicing, expense tracking, payment follow-ups, and financial reporting. Keeps your books organized and your cash flow visible.' },
+    { icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" /><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" /></svg>, title: 'Process Automation', desc: 'Takes your most time-consuming multi-step processes and runs them flawlessly. The workflows unique to your business that no off-the-shelf software can handle.' },
+  ]
+
+  useEffect(() => {
+    const el = capCarouselRef.current
+    if (!el) return
+    let startX = 0
+    let startY = 0
+    const onStart = (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY }
+    const onEnd = (e) => {
+      const dx = e.changedTouches[0].clientX - startX
+      const dy = e.changedTouches[0].clientY - startY
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+        if (dx < 0) setCapSlide(s => Math.min(5, s + 1))
+        else setCapSlide(s => Math.max(0, s - 1))
+      }
+    }
+    el.addEventListener('touchstart', onStart, { passive: true })
+    el.addEventListener('touchend', onEnd, { passive: true })
+    return () => { el.removeEventListener('touchstart', onStart); el.removeEventListener('touchend', onEnd) }
+  }, [])
 
   return (
     <>
@@ -138,19 +166,21 @@ function HomePage() {
       <main>
       {/* HERO */}
       <section className="hero">
-        <div className="landscape">
+        <div className="clouds-container">
           <div className="cloud cloud-1"></div>
           <div className="cloud cloud-2"></div>
           <div className="cloud cloud-4"></div>
-          <svg viewBox="0 0 1440 340" preserveAspectRatio="none" style={{ position: 'absolute', bottom: 0, width: '100%', height: '100%' }}>
+        </div>
+        <div className="landscape">
+          <svg viewBox="0 0 1440 200" preserveAspectRatio="none" style={{ position: 'absolute', bottom: 0, width: '100%', height: '100%' }}>
             <defs>
               <linearGradient id="hill1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#5A8F62" /><stop offset="100%" stopColor="#3A6B42" /></linearGradient>
               <linearGradient id="hill2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#4A7B52" /><stop offset="100%" stopColor="#2C5A34" /></linearGradient>
               <linearGradient id="hill3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#3A6843" /><stop offset="100%" stopColor="#2C3E2D" /></linearGradient>
             </defs>
-            <path d="M0 220 Q200 140 400 200 Q600 160 800 190 Q1000 140 1200 180 Q1350 160 1440 200 L1440 340 L0 340Z" fill="url(#hill1)" opacity="0.5" />
-            <path d="M0 260 Q180 200 360 240 Q540 190 720 230 Q900 200 1080 240 Q1260 210 1440 250 L1440 340 L0 340Z" fill="url(#hill2)" opacity="0.7" />
-            <path d="M0 290 Q160 250 320 275 Q480 240 640 270 Q800 250 960 280 Q1120 255 1280 275 Q1380 260 1440 280 L1440 340 L0 340Z" fill="url(#hill3)" />
+            <path d="M0 120 Q200 80 400 110 Q600 85 800 105 Q1000 80 1200 100 Q1350 85 1440 110 L1440 200 L0 200Z" fill="url(#hill1)" opacity="0.5" />
+            <path d="M0 145 Q180 110 360 135 Q540 105 720 130 Q900 110 1080 140 Q1260 120 1440 145 L1440 200 L0 200Z" fill="url(#hill2)" opacity="0.7" />
+            <path d="M0 165 Q160 145 320 158 Q480 140 640 155 Q800 145 960 160 Q1120 148 1280 158 Q1380 150 1440 165 L1440 200 L0 200Z" fill="url(#hill3)" />
           </svg>
         </div>
         <div className="hero-content">
@@ -205,71 +235,39 @@ function HomePage() {
             <RevealDiv as="h2" delay={1}>What can they do?</RevealDiv>
             <RevealDiv as="p" className="section-subtitle section-subtitle-light" delay={2} style={{ margin: '16px auto 0' }}>From running your day-to-day operations to managing complex client relationships, they handle the workflows that actually move your business forward.</RevealDiv>
           </div>
-          <div className="cap-grid">
-            <RevealDiv className="cap-card">
-              <div className="icon-box icon-box-dark">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="3" />
-                  <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
-                </svg>
-              </div>
-              <h3>Operations Management</h3>
-              <p>Runs your daily operations end to end. Manages schedules, coordinates between teams, tracks deadlines, and makes sure nothing falls through the cracks.</p>
-            </RevealDiv>
-            <RevealDiv className="cap-card" delay={1}>
-              <div className="icon-box icon-box-dark">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
-                </svg>
-              </div>
-              <h3>Client Relationship Management</h3>
-              <p>Builds and maintains client relationships at scale. Remembers every detail, follows up at the right time, and keeps your clients feeling like your only client.</p>
-            </RevealDiv>
-            <RevealDiv className="cap-card" delay={2}>
-              <div className="icon-box icon-box-dark">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                  <polyline points="17 6 23 6 23 12" />
-                </svg>
-              </div>
-              <h3>Business Development</h3>
-              <p>Works your pipeline from first touch to close. Qualifies opportunities, nurtures prospects, prepares proposals, and keeps your revenue engine running.</p>
-            </RevealDiv>
-            <RevealDiv className="cap-card" delay={1}>
-              <div className="icon-box icon-box-dark">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2" />
-                  <rect x="8" y="2" width="8" height="4" rx="1" />
-                  <line x1="9" y1="12" x2="15" y2="12" />
-                  <line x1="9" y1="16" x2="13" y2="16" />
-                </svg>
-              </div>
-              <h3>Administrative Operations</h3>
-              <p>Handles the back-office work that eats your week. Communications, document management, vendor coordination, compliance tracking, and reporting.</p>
-            </RevealDiv>
-            <RevealDiv className="cap-card" delay={2}>
-              <div className="icon-box icon-box-dark">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="1" x2="12" y2="23" />
-                  <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
-                </svg>
-              </div>
-              <h3>Financial Operations</h3>
-              <p>Manages invoicing, expense tracking, payment follow-ups, and financial reporting. Keeps your books organized and your cash flow visible.</p>
-            </RevealDiv>
-            <RevealDiv className="cap-card" delay={3}>
-              <div className="icon-box icon-box-dark">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="23 4 23 10 17 10" />
-                  <polyline points="1 20 1 14 7 14" />
-                  <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
-                </svg>
-              </div>
-              <h3>Process Automation</h3>
-              <p>Takes your most time-consuming multi-step processes and runs them flawlessly. The workflows unique to your business that no off-the-shelf software can handle.</p>
-            </RevealDiv>
+          {/* Desktop grid - hidden on mobile */}
+          <div className="cap-grid cap-grid-desktop">
+            {capabilities.map((cap, i) => (
+              <RevealDiv className="cap-card" delay={i % 3} key={i}>
+                <div className="icon-box icon-box-dark">{cap.icon}</div>
+                <h3>{cap.title}</h3>
+                <p>{cap.desc}</p>
+              </RevealDiv>
+            ))}
+          </div>
+
+          {/* Mobile carousel - hidden on desktop */}
+          <div className="cap-carousel" ref={capCarouselRef}>
+            <div className="cap-carousel-track" style={{ transform: `translateX(-${capSlide * 100}%)` }}>
+              {capabilities.map((cap, i) => (
+                <div className="cap-carousel-slide" key={i}>
+                  <div className="cap-card">
+                    <div className="icon-box icon-box-dark">{cap.icon}</div>
+                    <h3>{cap.title}</h3>
+                    <p>{cap.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="cap-carousel-dots">
+              {capabilities.map((_, i) => (
+                <button key={i} className={`cap-dot${capSlide === i ? ' active' : ''}`} onClick={() => setCapSlide(i)} aria-label={`Slide ${i + 1}`} />
+              ))}
+            </div>
+            <div className="cap-carousel-nav">
+              <button className="cap-nav-btn" onClick={() => setCapSlide(s => Math.max(0, s - 1))} disabled={capSlide === 0} aria-label="Previous">&#8249;</button>
+              <button className="cap-nav-btn" onClick={() => setCapSlide(s => Math.min(capabilities.length - 1, s + 1))} disabled={capSlide === capabilities.length - 1} aria-label="Next">&#8250;</button>
+            </div>
           </div>
         </div>
         <div className="wave-divider">
