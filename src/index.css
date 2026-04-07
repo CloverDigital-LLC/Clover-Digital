@@ -93,7 +93,7 @@ section { position: relative; }
 .hero-content { position: relative; z-index: 2; text-align: center; padding: 60px 24px 0; max-width: 800px; margin: 0 auto; }
 .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8125rem; font-weight: 600; color: var(--green-500); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px; padding: 6px 16px; background: rgba(44,62,45,0.06); border-radius: var(--radius-pill); }
 .hero h1 { margin-bottom: 24px; color: var(--green-900); }
-.hero h1 em { font-style: normal; color: var(--green-500); font-family: 'DM Serif Display', serif; }
+.hero h1 em { font-style: normal; color: #ffffff; font-family: 'DM Serif Display', serif; }
 .hero-sub { font-size: clamp(1.0625rem, 2vw, 1.1875rem); color: var(--text-secondary); max-width: 580px; margin: 0 auto 40px; line-height: 1.7; }
 .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
 .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; background: var(--gold); color: var(--white); border: none; border-radius: var(--radius-pill); font-family: inherit; font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: all var(--transition); box-shadow: 0 2px 8px rgba(212,175,55,0.3), 0 6px 20px rgba(212,175,55,0.15); }
