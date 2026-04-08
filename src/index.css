@@ -79,16 +79,16 @@ section { position: relative; }
 /* Clouds */
 .cloud { position: absolute; background: #ffffff; border-radius: 50%; box-shadow: 0 4px 24px rgba(155,190,216,0.2); }
 .cloud::before, .cloud::after { content: ''; position: absolute; background: inherit; border-radius: 50%; box-shadow: inherit; }
-.cloud-1 { width: 200px; height: 60px; top: 8%; left: 8%; animation: float 26s ease-in-out infinite; opacity: 0.95; }
+.cloud-1 { width: 200px; height: 60px; top: 28%; left: 8%; animation: float 26s ease-in-out infinite; opacity: 0.95; }
 .cloud-1::before { width: 100px; height: 90px; top: -50px; left: 35px; }
 .cloud-1::after { width: 120px; height: 78px; top: -38px; left: 80px; }
-.cloud-2 { width: 170px; height: 52px; top: 3%; right: 12%; animation: float 30s ease-in-out infinite 3s; opacity: 0.9; }
+.cloud-2 { width: 170px; height: 52px; top: 22%; right: 12%; animation: float 30s ease-in-out infinite 3s; opacity: 0.9; }
 .cloud-2::before { width: 85px; height: 76px; top: -42px; left: 22px; }
 .cloud-2::after { width: 105px; height: 65px; top: -32px; left: 60px; }
-.cloud-3 { width: 140px; height: 44px; top: 18%; left: 48%; animation: float 22s ease-in-out infinite 7s; opacity: 0.8; }
+.cloud-3 { width: 140px; height: 44px; top: 40%; left: 48%; animation: float 22s ease-in-out infinite 7s; opacity: 0.8; }
 .cloud-3::before { width: 70px; height: 62px; top: -34px; left: 20px; }
 .cloud-3::after { width: 88px; height: 54px; top: -26px; left: 48px; }
-.cloud-4 { width: 100px; height: 32px; top: 14%; left: 72%; animation: float 20s ease-in-out infinite 10s; opacity: 0.65; }
+.cloud-4 { width: 100px; height: 32px; top: 35%; left: 72%; animation: float 20s ease-in-out infinite 10s; opacity: 0.65; }
 .cloud-4::before { width: 50px; height: 45px; top: -24px; left: 14px; }
 .cloud-4::after { width: 62px; height: 38px; top: -18px; left: 35px; }
 @keyframes float { 0%, 100% { transform: translateX(0) translateY(0); } 25% { transform: translateX(15px) translateY(-5px); } 50% { transform: translateX(30px) translateY(0); } 75% { transform: translateX(15px) translateY(5px); } }
