@@ -398,7 +398,7 @@ function HomePage() {
       {/* TRUST */}
       <section className="trust">
         <RevealDiv className="container">
-          <h3>Trusted by local businesses across industries</h3>
+          <h2 className="trust-heading">Trusted by local businesses across industries</h2>
           <div className="trust-pills">
             <a href="/for/home-services.html" className="trust-pill">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -481,7 +481,7 @@ function HomePage() {
               <p>Reliable digital employees for small businesses across the heartland. We handle the work so you can focus on what matters.</p>
             </div>
             <div>
-              <h4>Company</h4>
+              <h3 className="footer-heading">Company</h3>
               <ul className="footer-links">
                 <li><a href="#how-it-works">How it Works</a></li>
                 <li><a href="#capabilities">Capabilities</a></li>
@@ -490,7 +490,7 @@ function HomePage() {
               </ul>
             </div>
             <div>
-              <h4>Contact</h4>
+              <h3 className="footer-heading">Contact</h3>
               <ul className="footer-links">
                 <li><a href="mailto:hello@prairie-digital.com">hello@prairie-digital.com</a></li>
                 <li><a href="tel:+12173034601">(217) 303-4601</a></li>
