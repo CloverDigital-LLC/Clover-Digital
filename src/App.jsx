@@ -48,16 +48,16 @@ function Modal({ isOpen, onClose, title, children }) {
   }, [isOpen])
   if (!isOpen) return null
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={onClose}>
-      <div className="absolute inset-0" style={{ backgroundColor: 'rgba(44,62,45,0.6)', backdropFilter: 'blur(4px)' }}></div>
-      <div className="relative bg-white rounded-[2rem] p-10 max-w-lg w-full shadow-2xl" onClick={e => e.stopPropagation()} style={{ boxShadow: '0 25px 60px -15px rgba(44,62,45,0.25)' }}>
-        <button onClick={onClose} className="absolute top-6 right-6 w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200" style={{ backgroundColor: '#EEF2EC', color: '#4A5548' }}
+    <div style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }} onClick={onClose}>
+      <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(44,62,45,0.6)', backdropFilter: 'blur(4px)' }}></div>
+      <div style={{ position: 'relative', background: '#fff', borderRadius: '2rem', padding: '40px', maxWidth: '512px', width: '100%', boxShadow: '0 25px 60px -15px rgba(44,62,45,0.25)' }} onClick={e => e.stopPropagation()}>
+        <button onClick={onClose} style={{ position: 'absolute', top: '24px', right: '24px', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer', backgroundColor: '#EEF2EC', color: '#4A5548', transition: 'background-color 0.2s' }}
           onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#DEE6DC' }} onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#EEF2EC' }}>
-          <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg style={{ width: '20px', height: '20px' }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
-        <h3 className="font-serif text-3xl mb-2" style={{ color: '#2C3E2D' }}>{title}</h3>
+        <h3 style={{ fontFamily: 'DM Serif Display, serif', fontSize: '1.875rem', marginBottom: '8px', color: '#2C3E2D' }}>{title}</h3>
         {children}
       </div>
     </div>
@@ -83,30 +83,31 @@ function GetStartedModal({ isOpen, onClose }) {
     setSubmitting(false)
     setSubmitted(true)
   }
+  const inputStyle = { width: '100%', padding: '12px 20px', borderRadius: '16px', border: '1px solid #DEE6DC', fontSize: '1.0625rem', outline: 'none', transition: 'all 0.2s', backgroundColor: '#F9F6F0', color: '#2C3E2D', boxSizing: 'border-box', fontFamily: 'inherit' }
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Get Started">
       {submitted ? (
-        <div className="text-center py-8">
-          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#EEF2EC' }}>
-            <svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#7ba381" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+        <div style={{ textAlign: 'center', padding: '32px 0' }}>
+          <div style={{ width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', backgroundColor: '#EEF2EC' }}>
+            <svg style={{ width: '32px', height: '32px' }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#7ba381" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
           </div>
-          <p className="font-serif text-2xl mb-2" style={{ color: '#2C3E2D' }}>We'll be in touch!</p>
-          <p className="text-lg" style={{ color: '#4A5548' }}>Thank you for reaching out. Our team will contact you within 24 hours.</p>
-          <button onClick={onClose} className="mt-6 px-8 py-3 rounded-full text-white font-semibold transition-all duration-300" style={{ backgroundColor: '#D4AF37' }}>Close</button>
+          <p style={{ fontFamily: 'DM Serif Display, serif', fontSize: '1.5rem', marginBottom: '8px', color: '#2C3E2D' }}>We'll be in touch!</p>
+          <p style={{ fontSize: '1.0625rem', color: '#4A5548' }}>Thank you for reaching out. Our team will contact you within 24 hours.</p>
+          <button onClick={onClose} style={{ marginTop: '24px', padding: '12px 32px', borderRadius: '9999px', color: '#fff', fontWeight: 600, border: 'none', cursor: 'pointer', fontSize: '1rem', fontFamily: 'inherit', backgroundColor: '#D4AF37' }}>Close</button>
         </div>
       ) : (
         <>
-          <p className="text-lg mb-6" style={{ color: '#4A5548' }}>Tell us a bit about yourself and we'll get back to you shortly.</p>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <p style={{ fontSize: '1.0625rem', marginBottom: '24px', color: '#4A5548' }}>Tell us a bit about yourself and we'll get back to you shortly.</p>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {[{ name: 'name', placeholder: 'Your Name', type: 'text' }, { name: 'email', placeholder: 'Email Address', type: 'email' }, { name: 'business', placeholder: 'Business Name', type: 'text' }].map((field) => (
               <input key={field.name} type={field.type} name={field.name} placeholder={field.placeholder} value={formData[field.name]} onChange={handleChange} required
-                className="w-full px-5 py-3 rounded-2xl border text-lg outline-none transition-all duration-200" style={{ borderColor: '#DEE6DC', backgroundColor: '#F9F6F0', color: '#2C3E2D' }}
+                style={inputStyle}
                 onFocus={e => { e.currentTarget.style.borderColor = '#7ba381'; e.currentTarget.style.backgroundColor = 'white' }} onBlur={e => { e.currentTarget.style.borderColor = '#DEE6DC'; e.currentTarget.style.backgroundColor = '#F9F6F0' }} />
             ))}
             <textarea name="message" placeholder="What tasks are slowing you down?" value={formData.message} onChange={handleChange} rows={3}
-              className="w-full px-5 py-3 rounded-2xl border text-lg outline-none transition-all duration-200 resize-none" style={{ borderColor: '#DEE6DC', backgroundColor: '#F9F6F0', color: '#2C3E2D' }}
+              style={{ ...inputStyle, resize: 'none' }}
               onFocus={e => { e.currentTarget.style.borderColor = '#7ba381'; e.currentTarget.style.backgroundColor = 'white' }} onBlur={e => { e.currentTarget.style.borderColor = '#DEE6DC'; e.currentTarget.style.backgroundColor = '#F9F6F0' }} />
-            <button type="submit" disabled={submitting} className="w-full py-3 rounded-full text-white text-lg font-semibold transition-all duration-300 hover:-translate-y-0.5" style={{ backgroundColor: submitting ? '#B8962B' : '#D4AF37', opacity: submitting ? 0.7 : 1 }}
+            <button type="submit" disabled={submitting} style={{ width: '100%', padding: '12px', borderRadius: '9999px', color: '#fff', fontSize: '1.0625rem', fontWeight: 600, border: 'none', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.3s', backgroundColor: submitting ? '#B8962B' : '#D4AF37', opacity: submitting ? 0.7 : 1 }}
               onMouseEnter={e => { if (!submitting) e.currentTarget.style.backgroundColor = '#B8962B' }} onMouseLeave={e => { if (!submitting) e.currentTarget.style.backgroundColor = '#D4AF37' }}>
               {submitting ? 'Sending...' : 'Submit'}
             </button>
@@ -137,33 +138,34 @@ function BookCallModal({ isOpen, onClose }) {
     setSubmitted(true)
   }
   const timeSlots = ['9:00 AM', '10:00 AM', '11:00 AM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM']
+  const inputStyle = { width: '100%', padding: '12px 20px', borderRadius: '16px', border: '1px solid #DEE6DC', fontSize: '1.0625rem', outline: 'none', transition: 'all 0.2s', backgroundColor: '#F9F6F0', color: '#2C3E2D', boxSizing: 'border-box', fontFamily: 'inherit' }
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Book a 15-Minute Call">
       {submitted ? (
-        <div className="text-center py-8">
-          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#EEF2EC' }}>
-            <svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#7ba381" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+        <div style={{ textAlign: 'center', padding: '32px 0' }}>
+          <div style={{ width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', backgroundColor: '#EEF2EC' }}>
+            <svg style={{ width: '32px', height: '32px' }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#7ba381" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
           </div>
-          <p className="font-serif text-2xl mb-2" style={{ color: '#2C3E2D' }}>Call Booked!</p>
-          <p className="text-lg" style={{ color: '#4A5548' }}>We'll send a calendar invite to your email. Looking forward to chatting!</p>
-          <button onClick={onClose} className="mt-6 px-8 py-3 rounded-full text-white font-semibold transition-all duration-300" style={{ backgroundColor: '#D4AF37' }}>Close</button>
+          <p style={{ fontFamily: 'DM Serif Display, serif', fontSize: '1.5rem', marginBottom: '8px', color: '#2C3E2D' }}>Call Booked!</p>
+          <p style={{ fontSize: '1.0625rem', color: '#4A5548' }}>We'll send a calendar invite to your email. Looking forward to chatting!</p>
+          <button onClick={onClose} style={{ marginTop: '24px', padding: '12px 32px', borderRadius: '9999px', color: '#fff', fontWeight: 600, border: 'none', cursor: 'pointer', fontSize: '1rem', fontFamily: 'inherit', backgroundColor: '#D4AF37' }}>Close</button>
         </div>
       ) : (
         <>
-          <p className="text-lg mb-6" style={{ color: '#4A5548' }}>No pressure, no hard sell. Just a friendly chat about your business.</p>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <p style={{ fontSize: '1.0625rem', marginBottom: '24px', color: '#4A5548' }}>No pressure, no hard sell. Just a friendly chat about your business.</p>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {[{ name: 'name', placeholder: 'Your Name', type: 'text' }, { name: 'email', placeholder: 'Email Address', type: 'email' }, { name: 'phone', placeholder: 'Phone Number (optional)', type: 'tel' }].map((field) => (
               <input key={field.name} type={field.type} name={field.name} placeholder={field.placeholder} value={formData[field.name]} onChange={handleChange} required={field.name !== 'phone'}
-                className="w-full px-5 py-3 rounded-2xl border text-lg outline-none transition-all duration-200" style={{ borderColor: '#DEE6DC', backgroundColor: '#F9F6F0', color: '#2C3E2D' }}
+                style={inputStyle}
                 onFocus={e => { e.currentTarget.style.borderColor = '#7ba381'; e.currentTarget.style.backgroundColor = 'white' }} onBlur={e => { e.currentTarget.style.borderColor = '#DEE6DC'; e.currentTarget.style.backgroundColor = '#F9F6F0' }} />
             ))}
-            <select name="time" value={formData.time} onChange={handleChange} required className="w-full px-5 py-3 rounded-2xl border text-lg outline-none transition-all duration-200"
-              style={{ borderColor: '#DEE6DC', backgroundColor: '#F9F6F0', color: formData.time ? '#2C3E2D' : '#9aaa96' }}
+            <select name="time" value={formData.time} onChange={handleChange} required
+              style={{ ...inputStyle, color: formData.time ? '#2C3E2D' : '#9aaa96', appearance: 'none', backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 12 12%27%3E%3Cpath d=%27M6 8L1 3h10z%27 fill=%27%234A5548%27/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center' }}
               onFocus={e => { e.currentTarget.style.borderColor = '#7ba381'; e.currentTarget.style.backgroundColor = 'white' }} onBlur={e => { e.currentTarget.style.borderColor = '#DEE6DC'; e.currentTarget.style.backgroundColor = '#F9F6F0' }}>
               <option value="">Preferred Time Slot</option>
               {timeSlots.map(slot => <option key={slot} value={slot}>{slot}</option>)}
             </select>
-            <button type="submit" disabled={submitting} className="w-full py-3 rounded-full text-white text-lg font-semibold transition-all duration-300 hover:-translate-y-0.5" style={{ backgroundColor: submitting ? '#B8962B' : '#D4AF37', opacity: submitting ? 0.7 : 1 }}
+            <button type="submit" disabled={submitting} style={{ width: '100%', padding: '12px', borderRadius: '9999px', color: '#fff', fontSize: '1.0625rem', fontWeight: 600, border: 'none', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.3s', backgroundColor: submitting ? '#B8962B' : '#D4AF37', opacity: submitting ? 0.7 : 1 }}
               onMouseEnter={e => { if (!submitting) e.currentTarget.style.backgroundColor = '#B8962B' }} onMouseLeave={e => { if (!submitting) e.currentTarget.style.backgroundColor = '#D4AF37' }}>
               {submitting ? 'Booking...' : 'Book My Call'}
             </button>
