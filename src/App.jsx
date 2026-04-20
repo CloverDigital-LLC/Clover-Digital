@@ -176,6 +176,146 @@ function BookCallModal({ isOpen, onClose }) {
   )
 }
 
+/* ── Inbox Demo — animated iMessage thread ── */
+const INBOX_THREAD = [
+  { from: 'Karen',  isClover: false, body: "Hey — can you reschedule Mrs. Patel's Tuesday visit, send last month's invoice, and follow up with the Johnsons on their renewal?" },
+  { from: 'Clover', isClover: true,  body: "On it." },
+  { from: 'Clover', isClover: true,  body: "All three done.\n\n• Patel moved to Tues the 18th, 2:00 PM — confirmed by text\n• Invoice №2041 sent — $4,225 / 32.5 hrs\n• Johnson renewal email out at 2:40 PM" },
+  { from: 'Karen',  isClover: false, body: "Perfect. Thank you \u{1F64F}" },
+]
+
+function InboxThread() {
+  const rootRef = useRef(null)
+  const [shown, setShown] = useState(0)
+  const [inView, setInView] = useState(false)
+
+  useEffect(() => {
+    const el = rootRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setInView(true); obs.disconnect() } },
+      { threshold: 0.15 }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!inView) return
+    const timers = []
+    INBOX_THREAD.forEach((_, i) => {
+      timers.push(setTimeout(() => setShown(s => Math.max(s, i + 1)), 700 + i * 1600))
+    })
+    return () => timers.forEach(clearTimeout)
+  }, [inView])
+
+  const visible = INBOX_THREAD.slice(0, shown)
+  const grouped = visible.map((m, i) => {
+    const next = visible[i + 1]
+    const isLastOfGroup = !next || next.isClover !== m.isClover
+    return { ...m, isLastOfGroup }
+  })
+  const nextMsg = INBOX_THREAD[shown]
+  const showTyping = inView && nextMsg && nextMsg.isClover
+
+  return (
+    <div className="imsg-phone" ref={rootRef} role="region" aria-label="Example text thread with a Clover digital employee">
+      <div className="imsg-screen">
+        <div className="imsg-status">
+          <span className="imsg-status-time">9:41</span>
+          <div className="imsg-status-notch" />
+          <div className="imsg-status-right">
+            <svg width="17" height="11" viewBox="0 0 17 11" fill="none" aria-hidden="true">
+              <rect x="0" y="3" width="3" height="5" rx="1" fill="#000"/>
+              <rect x="4.5" y="2" width="3" height="7" rx="1" fill="#000"/>
+              <rect x="9" y="1" width="3" height="9" rx="1" fill="#000"/>
+              <rect x="13.5" y="0" width="3" height="11" rx="1" fill="#000"/>
+            </svg>
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none" aria-hidden="true">
+              <path d="M8 2.5a9 9 0 0 1 6.36 2.64l-1.41 1.41A7 7 0 0 0 8 4.5a7 7 0 0 0-4.95 2.05L1.64 5.14A9 9 0 0 1 8 2.5z M8 6.5a5 5 0 0 1 3.54 1.46l-1.42 1.41A3 3 0 0 0 8 8.5a3 3 0 0 0-2.12.87L4.46 7.96A5 5 0 0 1 8 6.5z M8 10a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" fill="#000"/>
+            </svg>
+            <div className="imsg-battery">
+              <div className="imsg-battery-body"><div className="imsg-battery-fill"/></div>
+              <div className="imsg-battery-tip"/>
+            </div>
+          </div>
+        </div>
+        <div className="imsg-nav">
+          <div className="imsg-nav-back">
+            <svg width="12" height="20" viewBox="0 0 12 20" fill="none" aria-hidden="true">
+              <path d="M10 2L2 10l8 8" stroke="#007AFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span className="imsg-nav-badge">3</span>
+          </div>
+          <div className="imsg-nav-contact">
+            <div className="imsg-nav-avatar">
+              <svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">
+                <rect width="40" height="40" rx="20" fill="var(--green-700)"/>
+                <text x="20" y="27" textAnchor="middle" fontFamily="Fraunces, Georgia, serif" fontSize="22" fill="#fff" fontStyle="italic">C</text>
+              </svg>
+            </div>
+            <div className="imsg-nav-name">
+              Clover
+              <svg width="8" height="12" viewBox="0 0 8 12" fill="none" aria-hidden="true">
+                <path d="M1.5 1.5L6 6l-4.5 4.5" stroke="#8e8e93" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </div>
+          </div>
+          <div className="imsg-nav-right">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M17 10.5V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-3.5l5 3.5V7l-5 3.5z" fill="#007AFF"/>
+            </svg>
+          </div>
+        </div>
+        <div className="imsg-timestamp"><span>Today</span> 7:12 AM</div>
+        <div className="imsg-messages">
+          {grouped.map((m, i) => (
+            <div key={i} className={`imsg-row ${m.isClover ? 'from-them' : 'from-me'} ${m.isLastOfGroup ? 'has-tail' : ''}`}>
+              <div className="imsg-bubble-wrap">
+                <div className="imsg-bubble">
+                  {m.body.split('\n').map((line, j) => (
+                    <React.Fragment key={j}>
+                      {j > 0 && <br/>}
+                      {line || '\u00A0'}
+                    </React.Fragment>
+                  ))}
+                </div>
+                {!m.isClover && i === grouped.length - 1 && shown === INBOX_THREAD.length && (
+                  <div className="imsg-delivered">Delivered</div>
+                )}
+              </div>
+            </div>
+          ))}
+          {showTyping && (
+            <div className="imsg-row from-them has-tail">
+              <div className="imsg-bubble imsg-typing" aria-label="typing">
+                <span/><span/><span/>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="imsg-inputbar">
+          <button className="imsg-plus" aria-label="More">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M7 1v12M1 7h12" stroke="#8e8e93" strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
+          </button>
+          <div className="imsg-inputfield">
+            <span className="imsg-placeholder">iMessage</span>
+            <button className="imsg-mic" aria-label="Dictate">
+              <svg width="14" height="18" viewBox="0 0 14 18" fill="none">
+                <rect x="4" y="1" width="6" height="10" rx="3" stroke="#8e8e93" strokeWidth="1.4"/>
+                <path d="M1 8a6 6 0 0 0 12 0M7 14v3" stroke="#8e8e93" strokeWidth="1.4" strokeLinecap="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div className="imsg-home-indicator" />
+      </div>
+    </div>
+  )
+}
+
 /* ── HomePage ── */
 function HomePage() {
   const [navScrolled, setNavScrolled] = useState(false)
@@ -198,6 +338,8 @@ function HomePage() {
     style.textContent = `
       @media (max-width: 767px) {
         .how-it-works, .capabilities, .why-us, .faq, .cta { padding: 64px 0 72px; }
+        .inbox-demo { padding: 64px 0 80px; }
+        .inbox-demo-frame { margin-top: 36px; }
         .stats { padding: 56px 0; }
         .testimonial { padding: 56px 0 64px; }
         .trust { padding: 40px 0 56px; }
@@ -382,6 +524,20 @@ function HomePage() {
               <p>Your new hire goes live. They seamlessly start answering emails, taking phone calls, booking appointments, and organizing data without needing a coffee break.</p>
             </RevealDiv>
           </div>
+        </div>
+      </section>
+
+      {/* INBOX DEMO */}
+      <section className="inbox-demo" id="in-practice">
+        <div className="container">
+          <div className="text-center">
+            <RevealDiv as="span" className="section-label">In Practice</RevealDiv>
+            <RevealDiv as="h2" delay={1}>One text. Done by end of day.</RevealDiv>
+            <RevealDiv as="p" className="section-subtitle" delay={2} style={{ margin: '16px auto 0' }}>A typical Monday morning handoff. Scheduling, invoicing, follow-up — handled the way a real team member would.</RevealDiv>
+          </div>
+          <RevealDiv className="inbox-demo-frame" delay={2}>
+            <InboxThread />
+          </RevealDiv>
         </div>
       </section>
 
