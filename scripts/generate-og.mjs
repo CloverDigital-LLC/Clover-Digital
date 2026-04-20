@@ -82,11 +82,12 @@ const svg = `
   <text x="${W / 2}" y="370" text-anchor="middle"
         font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-weight="600"
         font-size="120" letter-spacing="-2">
-    <tspan fill="#4a8b67">Clover </tspan><tspan fill="#ffffff">Dıgital</tspan>
+    <tspan fill="#4a8b67">Clover </tspan><tspan fill="#ffffff">Dıgıtal</tspan>
   </text>
 
-  <!-- Clover-as-dot above the first i in Digital (no stem), with center dot -->
+  <!-- Clover-as-dots above both dotless i's in Digital -->
   ${dottedClover(736, 274, 16, 0, '#4a8b67', '#ffffff')}
+  ${dottedClover(855, 274, 16, 0, '#4a8b67', '#ffffff')}
 
   <!-- Tagline -->
   <text x="${W / 2}" y="425" text-anchor="middle"
