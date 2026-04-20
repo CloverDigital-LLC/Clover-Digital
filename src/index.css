@@ -85,7 +85,24 @@ section { position: relative; }
 @keyframes float { 0%, 100% { transform: translateX(0) translateY(0); } 25% { transform: translateX(15px) translateY(-5px); } 50% { transform: translateX(30px) translateY(0); } 75% { transform: translateX(15px) translateY(5px); } }
 @keyframes cloudDrift { 0% { transform: translateX(0); } 100% { transform: translateX(calc(100vw + 240px)); } }
 
-.hero-content { position: relative; z-index: 2; text-align: center; padding: 60px 24px 0; max-width: 800px; margin: 0 auto; }
+/* Foliage — clover trees on the hills + bushes at the base */
+.foliage { position: absolute; left: 0; right: 0; bottom: 0; height: 200px; pointer-events: none; z-index: 2; }
+@media (max-width: 767px) { .foliage { height: 160px; } }
+.tree, .bush { position: absolute; background-repeat: no-repeat; background-size: contain; background-position: bottom center; filter: drop-shadow(0 2px 2px rgba(15,42,29,0.25)); }
+.tree { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 46'><rect x='18' y='30' width='4' height='14' fill='%233a2a1a'/><g fill='%230f2a1d'><ellipse cx='12' cy='12' rx='9' ry='8'/><ellipse cx='28' cy='12' rx='9' ry='8'/><ellipse cx='12' cy='22' rx='9' ry='8'/><ellipse cx='28' cy='22' rx='9' ry='8'/></g></svg>"); }
+.bush { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'><g fill='%231f4d35'><ellipse cx='8' cy='8' rx='6' ry='5.5'/><ellipse cx='22' cy='8' rx='6' ry='5.5'/><ellipse cx='8' cy='15' rx='6' ry='5.5'/><ellipse cx='22' cy='15' rx='6' ry='5.5'/></g></svg>"); }
+.tree-1 { width: 72px; height: 82px; left: 13%; bottom: 18%; }
+.tree-2 { width: 54px; height: 62px; left: 33%; bottom: 28%; opacity: 0.92; }
+.tree-3 { width: 62px; height: 71px; left: 51%; bottom: 22%; }
+.tree-4 { width: 46px; height: 52px; left: 69%; bottom: 30%; opacity: 0.9; }
+.tree-5 { width: 38px; height: 44px; left: 86%; bottom: 36%; opacity: 0.85; }
+.bush-1 { width: 42px; height: 26px; left: 6%; bottom: 2%; }
+.bush-2 { width: 32px; height: 20px; left: 27%; bottom: 6%; }
+.bush-3 { width: 38px; height: 24px; left: 58%; bottom: 3%; }
+.bush-4 { width: 30px; height: 18px; left: 76%; bottom: 7%; }
+.bush-5 { width: 34px; height: 22px; left: 91%; bottom: 2%; }
+
+.hero-content { position: relative; z-index: 3; text-align: center; padding: 60px 24px 0; max-width: 800px; margin: 0 auto; }
 .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8125rem; font-weight: 600; color: var(--green-500); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px; padding: 6px 16px; background: rgba(44,62,45,0.06); border-radius: var(--radius-pill); }
 .hero h1 { margin-bottom: 24px; color: var(--green-900); }
 .hero h1 em { font-style: italic; color: white !important; font-family: 'Fraunces', serif; font-weight: 600; font-variation-settings: 'SOFT' 100, 'opsz' 144; }
@@ -288,4 +305,12 @@ section { position: relative; }
   .landscape { height: 15vh; min-height: 80px; max-height: 120px; }
   .hills-desktop { display: none !important; }
   .hills-mobile { display: block !important; }
+
+  /* Mobile foliage — keep it simple, hide most */
+  .tree-2, .tree-4, .tree-5, .bush-2, .bush-4 { display: none; }
+  .tree-1 { width: 44px; height: 50px; left: 12%; bottom: 22%; }
+  .tree-3 { width: 36px; height: 42px; left: 60%; bottom: 28%; }
+  .bush-1 { width: 26px; height: 16px; left: 4%; bottom: 4%; }
+  .bush-3 { width: 24px; height: 14px; left: 50%; bottom: 6%; }
+  .bush-5 { width: 22px; height: 14px; left: 86%; bottom: 4%; }
 }

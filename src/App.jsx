@@ -340,6 +340,18 @@ function HomePage() {
             <path d="M0 45 Q70 40 150 43 Q230 38 310 42 Q370 40 400 45 L400 60 L0 60Z" fill="url(#mhill3)" />
           </svg>
         </div>
+        <div className="foliage" aria-hidden="true">
+          <div className="tree tree-1"></div>
+          <div className="tree tree-2"></div>
+          <div className="tree tree-3"></div>
+          <div className="tree tree-4"></div>
+          <div className="tree tree-5"></div>
+          <div className="bush bush-1"></div>
+          <div className="bush bush-2"></div>
+          <div className="bush bush-3"></div>
+          <div className="bush bush-4"></div>
+          <div className="bush bush-5"></div>
+        </div>
         <div className="hero-content">
 
           <RevealDiv as="h1" delay={1}>Your new best employee <em style={{color: '#ffffff'}}>doesn't sleep.</em></RevealDiv>
