@@ -57,7 +57,7 @@ function Modal({ isOpen, onClose, title, children }) {
             <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
-        <h3 style={{ fontFamily: 'DM Serif Display, serif', fontSize: '1.875rem', marginBottom: '8px', color: '#2C3E2D' }}>{title}</h3>
+        <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '1.875rem', marginBottom: '8px', color: '#2C3E2D' }}>{title}</h3>
         {children}
       </div>
     </div>
@@ -91,7 +91,7 @@ function GetStartedModal({ isOpen, onClose }) {
           <div style={{ width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', backgroundColor: '#EEF2EC' }}>
             <svg style={{ width: '32px', height: '32px' }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#7ba381" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
           </div>
-          <p style={{ fontFamily: 'DM Serif Display, serif', fontSize: '1.5rem', marginBottom: '8px', color: '#2C3E2D' }}>We'll be in touch!</p>
+          <p style={{ fontFamily: 'Fraunces, serif', fontSize: '1.5rem', marginBottom: '8px', color: '#2C3E2D' }}>We'll be in touch!</p>
           <p style={{ fontSize: '1.0625rem', color: '#4A5548' }}>Thank you for reaching out. Our team will contact you within 24 hours.</p>
           <button onClick={onClose} style={{ marginTop: '24px', padding: '12px 32px', borderRadius: '9999px', color: '#fff', fontWeight: 600, border: 'none', cursor: 'pointer', fontSize: '1rem', fontFamily: 'inherit', backgroundColor: '#D4AF37' }}>Close</button>
         </div>
@@ -146,7 +146,7 @@ function BookCallModal({ isOpen, onClose }) {
           <div style={{ width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', backgroundColor: '#EEF2EC' }}>
             <svg style={{ width: '32px', height: '32px' }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#7ba381" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
           </div>
-          <p style={{ fontFamily: 'DM Serif Display, serif', fontSize: '1.5rem', marginBottom: '8px', color: '#2C3E2D' }}>Call Booked!</p>
+          <p style={{ fontFamily: 'Fraunces, serif', fontSize: '1.5rem', marginBottom: '8px', color: '#2C3E2D' }}>Call Booked!</p>
           <p style={{ fontSize: '1.0625rem', color: '#4A5548' }}>We'll send a calendar invite to your email. Looking forward to chatting!</p>
           <button onClick={onClose} style={{ marginTop: '24px', padding: '12px 32px', borderRadius: '9999px', color: '#fff', fontWeight: 600, border: 'none', cursor: 'pointer', fontSize: '1rem', fontFamily: 'inherit', backgroundColor: '#D4AF37' }}>Close</button>
         </div>
