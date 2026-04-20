@@ -67,18 +67,18 @@ const svg = `
   <path d="M0 560 Q160 545 320 555 Q480 540 640 553 Q800 544 960 557 Q1120 548 1200 560 L1200 ${H} L0 ${H}Z"
         fill="url(#hill3)"/>
 
-  <!-- Logo mark -->
-  ${cloverLogo(W / 2, 250, 26, '#0f2a1d', '#faf6ef')}
-
-  <!-- Wordmark -->
-  <text x="${W / 2}" y="390" text-anchor="middle"
+  <!-- Wordmark — Clover in lighter green, Digital in darker. First i is dotless (ı) so a clover can sit above it as the dot. -->
+  <text x="${W / 2}" y="370" text-anchor="middle"
         font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-weight="600"
-        font-size="110" fill="#0f2a1d" letter-spacing="-2">
-    Clover Digital
+        font-size="120" letter-spacing="-2">
+    <tspan fill="#4a8b67">Clover </tspan><tspan fill="#0f2a1d">Dıgital</tspan>
   </text>
 
+  <!-- Clover-as-dot above the first i in Digital (no stem) -->
+  ${clover(734, 282, 12, -6, '#0f2a1d')}
+
   <!-- Tagline -->
-  <text x="${W / 2}" y="445" text-anchor="middle"
+  <text x="${W / 2}" y="425" text-anchor="middle"
         font-family="Helvetica, Arial, sans-serif" font-weight="500"
         font-size="28" fill="#1a1a16" letter-spacing="0.5">
     Digital Employees for Small Business
