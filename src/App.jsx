@@ -212,9 +212,8 @@ function HomePage() {
         .btn-primary, .btn-secondary { width: 100%; max-width: 320px; justify-content: center; }
         .clouds-container { height: 30%; top: 72px; }
         .cloud-1, .cloud-4 { display: none; }
-        .cloud-2 { width: 100px; height: 30px; top: 30%; right: auto; left: -120px; animation: cloudDrift 25s linear infinite; opacity: 0.85; }
-        .cloud-2::before { width: 50px; height: 44px; top: -24px; left: 14px; }
-        .cloud-2::after { width: 62px; height: 36px; top: -18px; left: 36px; }
+        .cloud-2 { width: 80px; height: 80px; top: 22%; right: auto; left: -120px; animation: cloudDrift 25s linear infinite; opacity: 0.9; }
+        .cloud-3 { width: 64px; height: 64px; top: 48%; left: 55%; opacity: 0.8; }
         .step-card { padding: 28px 24px; }
         .cap-card { padding: 24px 20px; }
         .why-card { padding: 24px 20px; }
@@ -279,11 +278,13 @@ function HomePage() {
       <nav className={`nav${navScrolled ? ' scrolled' : ''}`}>
         <div className="nav-inner">
           <a href="#" className="nav-logo">
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-              <circle cx="14" cy="14" r="13" stroke="#1f4d35" strokeWidth="2" fill="none" />
-              <path d="M8 18 C8 18, 10 10, 14 10 C18 10, 20 18, 20 18" stroke="#1f4d35" strokeWidth="2" fill="none" strokeLinecap="round" />
-              <path d="M11 16 C11 16, 12 12, 14 12 C16 12, 17 16, 17 16" stroke="#4a8b67" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-              <circle cx="14" cy="8" r="1.5" fill="#c98b3a" />
+            <svg width="28" height="28" viewBox="0 0 48 48" fill="none" aria-label="Clover">
+              <ellipse cx="17" cy="15" rx="8" ry="8.5" fill="#1f4d35" />
+              <ellipse cx="31" cy="15" rx="8" ry="8.5" fill="#1f4d35" />
+              <ellipse cx="17" cy="29" rx="8" ry="8.5" fill="#1f4d35" />
+              <ellipse cx="31" cy="29" rx="8" ry="8.5" fill="#1f4d35" />
+              <circle cx="24" cy="22" r="2.6" fill="#faf6ef" />
+              <path d="M24 36 Q 24 42, 30 44" stroke="#1f4d35" strokeWidth="2.2" strokeLinecap="round" fill="none" />
             </svg>
             Clover Digital
           </a>
@@ -613,10 +614,13 @@ function HomePage() {
           <div className="footer-grid">
             <div className="footer-brand">
               <div className="footer-logo">
-                <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
-                  <circle cx="14" cy="14" r="13" stroke="#a7c4b2" strokeWidth="2" fill="none" />
-                  <path d="M8 18 C8 18, 10 10, 14 10 C18 10, 20 18, 20 18" stroke="#a7c4b2" strokeWidth="2" fill="none" strokeLinecap="round" />
-                  <circle cx="14" cy="8" r="1.5" fill="#c98b3a" />
+                <svg width="24" height="24" viewBox="0 0 48 48" fill="none" aria-label="Clover">
+                  <ellipse cx="17" cy="15" rx="8" ry="8.5" fill="#a7c4b2" />
+                  <ellipse cx="31" cy="15" rx="8" ry="8.5" fill="#a7c4b2" />
+                  <ellipse cx="17" cy="29" rx="8" ry="8.5" fill="#a7c4b2" />
+                  <ellipse cx="31" cy="29" rx="8" ry="8.5" fill="#a7c4b2" />
+                  <circle cx="24" cy="22" r="2.6" fill="#0f2a1d" />
+                  <path d="M24 36 Q 24 42, 30 44" stroke="#a7c4b2" strokeWidth="2.2" strokeLinecap="round" fill="none" />
                 </svg>
                 Clover Digital
               </div>

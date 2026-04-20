@@ -76,21 +76,12 @@ section { position: relative; }
 .hills-desktop { display: block; }
 .clouds-container { position: absolute; top: 0; left: 0; right: 0; height: 50%; pointer-events: none; z-index: 1; overflow: hidden; }
 
-/* Clouds */
-.cloud { position: absolute; background: #ffffff; border-radius: 50%; box-shadow: 0 4px 24px rgba(155,190,216,0.2); }
-.cloud::before, .cloud::after { content: ''; position: absolute; background: inherit; border-radius: 50%; box-shadow: inherit; }
-.cloud-1 { width: 200px; height: 60px; top: 28%; left: 8%; animation: float 26s ease-in-out infinite; opacity: 0.95; }
-.cloud-1::before { width: 100px; height: 90px; top: -50px; left: 35px; }
-.cloud-1::after { width: 120px; height: 78px; top: -38px; left: 80px; }
-.cloud-2 { width: 170px; height: 52px; top: 22%; right: 12%; animation: float 30s ease-in-out infinite 3s; opacity: 0.9; }
-.cloud-2::before { width: 85px; height: 76px; top: -42px; left: 22px; }
-.cloud-2::after { width: 105px; height: 65px; top: -32px; left: 60px; }
-.cloud-3 { width: 140px; height: 44px; top: 40%; left: 48%; animation: float 22s ease-in-out infinite 7s; opacity: 0.8; }
-.cloud-3::before { width: 70px; height: 62px; top: -34px; left: 20px; }
-.cloud-3::after { width: 88px; height: 54px; top: -26px; left: 48px; }
-.cloud-4 { width: 100px; height: 32px; top: 35%; left: 72%; animation: float 20s ease-in-out infinite 10s; opacity: 0.65; }
-.cloud-4::before { width: 50px; height: 45px; top: -24px; left: 14px; }
-.cloud-4::after { width: 62px; height: 38px; top: -18px; left: 35px; }
+/* Clouds — clover-shaped */
+.cloud { position: absolute; background-repeat: no-repeat; background-size: contain; background-position: center; filter: drop-shadow(0 6px 18px rgba(155,190,216,0.35)); background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='white'><circle cx='32' cy='32' r='22'/><circle cx='68' cy='32' r='22'/><circle cx='32' cy='68' r='22'/><circle cx='68' cy='68' r='22'/></g></svg>"); }
+.cloud-1 { width: 180px; height: 180px; top: 8%; left: 6%; animation: float 26s ease-in-out infinite; opacity: 0.95; }
+.cloud-2 { width: 140px; height: 140px; top: 14%; right: 10%; animation: float 30s ease-in-out infinite 3s; opacity: 0.92; }
+.cloud-3 { width: 110px; height: 110px; top: 36%; left: 44%; animation: float 22s ease-in-out infinite 7s; opacity: 0.85; }
+.cloud-4 { width: 90px; height: 90px; top: 28%; left: 74%; animation: float 20s ease-in-out infinite 10s; opacity: 0.72; }
 @keyframes float { 0%, 100% { transform: translateX(0) translateY(0); } 25% { transform: translateX(15px) translateY(-5px); } 50% { transform: translateX(30px) translateY(0); } 75% { transform: translateX(15px) translateY(5px); } }
 @keyframes cloudDrift { 0% { transform: translateX(0); } 100% { transform: translateX(calc(100vw + 240px)); } }
 
@@ -270,9 +261,8 @@ section { position: relative; }
   /* Clouds on mobile */
   .clouds-container { height: 30%; top: 72px; }
   .cloud-1, .cloud-4 { display: none; }
-  .cloud-2 { width: 100px; height: 30px; top: 30%; right: auto; left: -120px; animation: cloudDrift 25s linear infinite; opacity: 0.85; }
-  .cloud-2::before { width: 50px; height: 44px; top: -24px; left: 14px; }
-  .cloud-2::after { width: 62px; height: 36px; top: -18px; left: 36px; }
+  .cloud-2 { width: 80px; height: 80px; top: 22%; right: auto; left: -120px; animation: cloudDrift 25s linear infinite; opacity: 0.9; }
+  .cloud-3 { width: 64px; height: 64px; top: 48%; left: 55%; opacity: 0.8; }
 
   /* Card padding tightened */
   .step-card { padding: 28px 24px; }
