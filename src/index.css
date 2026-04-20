@@ -88,8 +88,8 @@ section { position: relative; }
 .foliage { position: absolute; left: 0; right: 0; bottom: 0; height: 200px; pointer-events: none; z-index: 2; }
 @media (max-width: 767px) { .foliage { height: 160px; } }
 .tree { position: absolute; background-repeat: no-repeat; background-size: contain; background-position: bottom center; }
-.tree-1 { width: 52px; height: 77px; left: 10%; bottom: 17%; opacity: 0.75; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 56'><rect x='18' y='30' width='4' height='24' fill='%233a2a1a'/><g fill='%230f2a1d'><ellipse cx='12' cy='12' rx='9' ry='8'/><ellipse cx='28' cy='12' rx='9' ry='8'/><ellipse cx='12' cy='22' rx='9' ry='8'/><ellipse cx='28' cy='22' rx='9' ry='8'/></g></svg>"); }
-.tree-5 { width: 28px; height: 39px; left: 83%; bottom: 30%; opacity: 0.55; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 56'><rect x='18' y='30' width='4' height='24' fill='%234a3a2a'/><g fill='%232f6b4a'><ellipse cx='12' cy='12' rx='9' ry='8'/><ellipse cx='28' cy='12' rx='9' ry='8'/><ellipse cx='12' cy='22' rx='9' ry='8'/><ellipse cx='28' cy='22' rx='9' ry='8'/></g></svg>"); }
+.tree-1 { width: 52px; height: 78px; left: 10%; bottom: 17%; opacity: 0.75; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 60'><rect x='18' y='34' width='4' height='26' fill='%233a2a1a'/><g fill='%230f2a1d'><circle cx='13' cy='13' r='9'/><circle cx='27' cy='13' r='9'/><circle cx='13' cy='27' r='9'/><circle cx='27' cy='27' r='9'/></g></svg>"); }
+.tree-5 { width: 28px; height: 42px; left: 83%; bottom: 30%; opacity: 0.55; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 60'><rect x='18' y='34' width='4' height='26' fill='%234a3a2a'/><g fill='%232f6b4a'><circle cx='13' cy='13' r='9'/><circle cx='27' cy='13' r='9'/><circle cx='13' cy='27' r='9'/><circle cx='27' cy='27' r='9'/></g></svg>"); }
 
 .hero-content { position: relative; z-index: 3; text-align: center; padding: 60px 24px 0; max-width: 800px; margin: 0 auto; }
 .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8125rem; font-weight: 600; color: var(--green-500); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px; padding: 6px 16px; background: rgba(44,62,45,0.06); border-radius: var(--radius-pill); }
@@ -383,6 +383,6 @@ section { position: relative; }
   .hills-mobile { display: block !important; }
 
   /* Mobile foliage — both trees, tuned for narrow viewport */
-  .tree-1 { width: 42px; height: 62px; left: 7%; bottom: 14%; }
-  .tree-5 { width: 26px; height: 36px; left: 78%; bottom: 22%; }
+  .tree-1 { width: 42px; height: 63px; left: 7%; bottom: 14%; }
+  .tree-5 { width: 26px; height: 39px; left: 78%; bottom: 22%; }
 }

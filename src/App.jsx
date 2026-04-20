@@ -356,8 +356,8 @@ function HomePage() {
         .cloud-4 { display: none; }
         .cloud-1 { width: 90px; top: 8%; left: 4%; opacity: 0.95; }
         .cloud-2 { width: 68px; right: auto; left: -100px; top: 22%; animation: cloudDrift 32s linear infinite; opacity: 0.9; }
-        .tree-1 { width: 42px; height: 62px; left: 7%; bottom: 14%; }
-        .tree-5 { width: 26px; height: 36px; left: 78%; bottom: 22%; }
+        .tree-1 { width: 42px; height: 63px; left: 7%; bottom: 14%; }
+        .tree-5 { width: 26px; height: 39px; left: 78%; bottom: 22%; }
         .step-card { padding: 28px 24px; }
         .cap-card { padding: 24px 20px; }
         .why-card { padding: 24px 20px; }
