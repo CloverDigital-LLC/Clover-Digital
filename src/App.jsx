@@ -212,8 +212,8 @@ function HomePage() {
         .btn-primary, .btn-secondary { width: 100%; max-width: 320px; justify-content: center; }
         .clouds-container { height: 30%; top: 72px; }
         .cloud-1, .cloud-4 { display: none; }
-        .cloud-2 { width: 80px; height: 80px; top: 22%; right: auto; left: -120px; animation: cloudDrift 25s linear infinite; opacity: 0.9; }
-        .cloud-3 { width: 64px; height: 64px; top: 48%; left: 55%; opacity: 0.8; }
+        .cloud-2 { width: 78px; right: auto; left: -120px; top: 22%; animation: cloudDrift 25s linear infinite; opacity: 0.9; }
+        .cloud-3 { width: 62px; top: 52%; left: 56%; opacity: 0.8; }
         .step-card { padding: 28px 24px; }
         .cap-card { padding: 24px 20px; }
         .why-card { padding: 24px 20px; }
@@ -314,6 +314,7 @@ function HomePage() {
         <div className="clouds-container">
           <div className="cloud cloud-1"></div>
           <div className="cloud cloud-2"></div>
+          <div className="cloud cloud-3"></div>
           <div className="cloud cloud-4"></div>
         </div>
         <div className="landscape">
