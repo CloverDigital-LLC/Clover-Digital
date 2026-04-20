@@ -86,7 +86,7 @@ const svg = `
   </text>
 
   <!-- Clover-as-dot above the first i in Digital (no stem), with center dot -->
-  ${dottedClover(736, 274, 16, -6, '#ffffff', '#4a8b67')}
+  ${dottedClover(736, 274, 16, -6, '#4a8b67', '#ffffff')}
 
   <!-- Tagline -->
   <text x="${W / 2}" y="425" text-anchor="middle"
