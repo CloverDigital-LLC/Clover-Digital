@@ -88,8 +88,8 @@ section { position: relative; }
 .foliage { position: absolute; left: 0; right: 0; bottom: 0; height: 200px; pointer-events: none; z-index: 2; }
 @media (max-width: 767px) { .foliage { height: 160px; } }
 .tree { position: absolute; background-repeat: no-repeat; background-size: contain; background-position: bottom center; }
-.tree-1 { width: 58px; height: 66px; left: 11%; bottom: 19%; opacity: 0.72; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 46'><rect x='18' y='30' width='4' height='14' fill='%233a2a1a'/><g fill='%230f2a1d'><ellipse cx='12' cy='12' rx='9' ry='8'/><ellipse cx='28' cy='12' rx='9' ry='8'/><ellipse cx='12' cy='22' rx='9' ry='8'/><ellipse cx='28' cy='22' rx='9' ry='8'/></g></svg>"); }
-.tree-5 { width: 32px; height: 38px; left: 82%; bottom: 32%; opacity: 0.5; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 46'><rect x='18' y='30' width='4' height='14' fill='%234a3a2a'/><g fill='%232f6b4a'><ellipse cx='12' cy='12' rx='9' ry='8'/><ellipse cx='28' cy='12' rx='9' ry='8'/><ellipse cx='12' cy='22' rx='9' ry='8'/><ellipse cx='28' cy='22' rx='9' ry='8'/></g></svg>"); }
+.tree-1 { width: 52px; height: 73px; left: 10%; bottom: 17%; opacity: 0.75; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 56'><rect x='18' y='30' width='4' height='24' fill='%233a2a1a'/><g fill='%230f2a1d'><ellipse cx='12' cy='12' rx='9' ry='8'/><ellipse cx='28' cy='12' rx='9' ry='8'/><ellipse cx='12' cy='22' rx='9' ry='8'/><ellipse cx='28' cy='22' rx='9' ry='8'/></g></svg>"); }
+.tree-5 { width: 28px; height: 39px; left: 83%; bottom: 30%; opacity: 0.55; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 56'><rect x='18' y='30' width='4' height='24' fill='%234a3a2a'/><g fill='%232f6b4a'><ellipse cx='12' cy='12' rx='9' ry='8'/><ellipse cx='28' cy='12' rx='9' ry='8'/><ellipse cx='12' cy='22' rx='9' ry='8'/><ellipse cx='28' cy='22' rx='9' ry='8'/></g></svg>"); }
 
 .hero-content { position: relative; z-index: 3; text-align: center; padding: 60px 24px 0; max-width: 800px; margin: 0 auto; }
 .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8125rem; font-weight: 600; color: var(--green-500); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px; padding: 6px 16px; background: rgba(44,62,45,0.06); border-radius: var(--radius-pill); }
@@ -265,10 +265,10 @@ section { position: relative; }
   .btn-primary, .btn-secondary { width: 100%; max-width: 320px; justify-content: center; }
 
   /* Clouds on mobile */
-  .clouds-container { height: 30%; top: 72px; }
-  .cloud-1, .cloud-4 { display: none; }
-  .cloud-2 { width: 80px; height: 80px; top: 22%; right: auto; left: -120px; animation: cloudDrift 25s linear infinite; opacity: 0.9; }
-  .cloud-3 { width: 64px; height: 64px; top: 48%; left: 55%; opacity: 0.8; }
+  .clouds-container { height: 35%; top: 72px; }
+  .cloud-4 { display: none; }
+  .cloud-1 { width: 90px; top: 8%; left: 4%; opacity: 0.95; }
+  .cloud-2 { width: 68px; top: 22%; right: auto; left: -100px; animation: cloudDrift 32s linear infinite; opacity: 0.9; }
 
   /* Card padding tightened */
   .step-card { padding: 28px 24px; }
@@ -295,7 +295,7 @@ section { position: relative; }
   .hills-desktop { display: none !important; }
   .hills-mobile { display: block !important; }
 
-  /* Mobile foliage — keep only the distant one, smaller */
-  .tree-1 { width: 38px; height: 44px; left: 10%; bottom: 24%; }
-  .tree-5 { display: none; }
+  /* Mobile foliage — both trees, tuned for narrow viewport */
+  .tree-1 { width: 42px; height: 58px; left: 7%; bottom: 14%; }
+  .tree-5 { width: 26px; height: 36px; left: 78%; bottom: 22%; }
 }

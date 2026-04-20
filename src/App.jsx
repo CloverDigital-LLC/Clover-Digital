@@ -210,10 +210,12 @@ function HomePage() {
         .hero-sub { margin-bottom: 32px; }
         .hero-actions { flex-direction: column; align-items: center; gap: 12px; }
         .btn-primary, .btn-secondary { width: 100%; max-width: 320px; justify-content: center; }
-        .clouds-container { height: 30%; top: 72px; }
-        .cloud-1, .cloud-4 { display: none; }
-        .cloud-2 { width: 78px; right: auto; left: -120px; top: 22%; animation: cloudDrift 25s linear infinite; opacity: 0.9; }
-        .cloud-3 { width: 62px; top: 52%; left: 56%; opacity: 0.8; }
+        .clouds-container { height: 35%; top: 72px; }
+        .cloud-4 { display: none; }
+        .cloud-1 { width: 90px; top: 8%; left: 4%; opacity: 0.95; }
+        .cloud-2 { width: 68px; right: auto; left: -100px; top: 22%; animation: cloudDrift 32s linear infinite; opacity: 0.9; }
+        .tree-1 { width: 42px; height: 58px; left: 7%; bottom: 14%; }
+        .tree-5 { width: 26px; height: 36px; left: 78%; bottom: 22%; }
         .step-card { padding: 28px 24px; }
         .cap-card { padding: 24px 20px; }
         .why-card { padding: 24px 20px; }
