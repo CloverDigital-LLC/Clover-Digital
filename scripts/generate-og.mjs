@@ -82,14 +82,11 @@ const svg = `
   <text x="${W / 2}" y="370" text-anchor="middle"
         font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-weight="600"
         font-size="120" letter-spacing="-2">
-    <tspan fill="#4a8b67">Clover </tspan><tspan fill="#ffffff">Digital</tspan>
+    <tspan fill="#4a8b67">Clover </tspan><tspan fill="#ffffff">Dıgital</tspan>
   </text>
 
-  <!-- Sky-colored coverup (page-relative gradient so it blends) hides the o glyph -->
-  <ellipse cx="423" cy="335" rx="40" ry="42" fill="url(#sky)"/>
-
-  <!-- Clover-as-o centered over the now-hidden "o" -->
-  ${dottedClover(423, 335, 26, 0, '#4a8b67', '#ffffff')}
+  <!-- Clover-as-dot above the first i in Digital (dotless ı, no stem) -->
+  ${dottedClover(736, 274, 16, 0, '#4a8b67', '#ffffff')}
 
   <!-- Tagline -->
   <text x="${W / 2}" y="425" text-anchor="middle"
