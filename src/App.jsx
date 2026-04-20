@@ -74,7 +74,7 @@ function GetStartedModal({ isOpen, onClose }) {
     e.preventDefault()
     setSubmitting(true)
     try {
-      await fetch('https://formsubmit.co/ajax/pons@prairie-digital.com', {
+      await fetch('https://formsubmit.co/ajax/pons@cloverdigital.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ _subject: `New Lead: ${formData.name} - ${formData.business}`, name: formData.name, email: formData.email, business: formData.business, message: formData.message || '(no message)', _template: 'table' }),
@@ -128,7 +128,7 @@ function BookCallModal({ isOpen, onClose }) {
     e.preventDefault()
     setSubmitting(true)
     try {
-      await fetch('https://formsubmit.co/ajax/pons@prairie-digital.com', {
+      await fetch('https://formsubmit.co/ajax/pons@cloverdigital.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ _subject: `Call Request: ${formData.name} - ${formData.time}`, name: formData.name, email: formData.email, phone: formData.phone || '(not provided)', preferred_time: formData.time, _template: 'table' }),
@@ -285,7 +285,7 @@ function HomePage() {
               <path d="M11 16 C11 16, 12 12, 14 12 C16 12, 17 16, 17 16" stroke="#4A6B4E" strokeWidth="1.5" fill="none" strokeLinecap="round" />
               <circle cx="14" cy="8" r="1.5" fill="#D4AF37" />
             </svg>
-            Prairie Digital
+            Clover Digital
           </a>
           <ul className="nav-links">
             <li><a href="#how-it-works">How it works</a></li>
@@ -437,7 +437,7 @@ function HomePage() {
       <section className="why-us">
         <div className="container">
           <div className="text-center">
-            <RevealDiv as="span" className="section-label">Why Prairie Digital</RevealDiv>
+            <RevealDiv as="span" className="section-label">Why Clover Digital</RevealDiv>
             <RevealDiv as="h2" delay={1}>Grounded in reality. Built for Main Street.</RevealDiv>
           </div>
           <div className="why-grid">
@@ -618,7 +618,7 @@ function HomePage() {
                   <path d="M8 18 C8 18, 10 10, 14 10 C18 10, 20 18, 20 18" stroke="#7BA381" strokeWidth="2" fill="none" strokeLinecap="round" />
                   <circle cx="14" cy="8" r="1.5" fill="#D4AF37" />
                 </svg>
-                Prairie Digital
+                Clover Digital
               </div>
               <p>Reliable digital employees for small businesses across the heartland. We handle the work so you can focus on what matters.</p>
             </div>
@@ -634,14 +634,14 @@ function HomePage() {
             <div>
               <h3 className="footer-heading">Contact</h3>
               <ul className="footer-links">
-                <li><a href="mailto:hello@prairie-digital.com">hello@prairie-digital.com</a></li>
+                <li><a href="mailto:hello@cloverdigital.com">hello@cloverdigital.com</a></li>
                 <li><a href="tel:+12173034601">(217) 303-4601</a></li>
                 <li><span style={{ fontSize: '0.875rem' }}>Springfield, Illinois</span></li>
               </ul>
             </div>
           </div>
           <div className="footer-bottom">
-            <span>© 2026 Prairie Digital LLC. All rights reserved.</span>
+            <span>© 2026 Clover Digital LLC. All rights reserved.</span>
             <div className="footer-legal">
               <a href="/privacy-policy.html">Privacy Policy</a>
               <a href="/terms-of-service.html">Terms of Service</a>

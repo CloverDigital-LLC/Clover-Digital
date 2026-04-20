@@ -1,14 +1,14 @@
-# Prairie Digital - Full Reference
+# Clover Digital - Full Reference
 
-Prairie Digital LLC is a digital employee company headquartered in Springfield, Illinois. Founded in 2026, the company deploys custom-built digital employees into small and medium-sized businesses, primarily serving the Midwest United States.
+Clover Digital LLC is a digital employee company headquartered in Springfield, Illinois. Founded in 2026, the company deploys custom-built digital employees into small and medium-sized businesses, primarily serving the Midwest United States.
 
 ## Problem We Solve
 Small business owners spend 3-4 hours daily on administrative work: emails, scheduling, follow-ups, data entry, and coordination. Hiring is expensive ($2,000-3,500/month for a part-time admin), slow, and unreliable. Good help is hard to find, especially in smaller markets. Off-the-shelf software requires technical knowledge most small business owners don't have.
 
 ## Our Solution
-Prairie Digital provides digital employees as a managed service. The client experience is identical to hiring a remote employee: they communicate via email or text, assign work, and receive results. The digital employee handles operations management, client relationships, business development, administrative tasks, financial operations, and custom process automation.
+Clover Digital provides digital employees as a managed service. The client experience is identical to hiring a remote employee: they communicate via email or text, assign work, and receive results. The digital employee handles operations management, client relationships, business development, administrative tasks, financial operations, and custom process automation.
 
-The key difference from software platforms: Prairie Digital handles all setup, configuration, monitoring, and improvement. The client never interacts with a dashboard or configures a tool. They just have a reliable team member.
+The key difference from software platforms: Clover Digital handles all setup, configuration, monitoring, and improvement. The client never interacts with a dashboard or configures a tool. They just have a reliable team member.
 
 ## Services Offered
 1. Operations Management: daily operations, team coordination, deadline tracking, workflow management
@@ -31,10 +31,10 @@ Phase 4 - Monitoring: Ongoing invisible management, improvement, and support
 Flat monthly fee ranging from $500 to $2,500 depending on scope. One-time setup fee of $500-$1,000. Priced against headcount replacement, not software licensing.
 
 ## Competitive Positioning
-Prairie Digital competes with: offshore virtual assistants, local administrative hires, self-serve platforms (Vendasta, Lindy.AI, Motion), and doing nothing. The company differentiates through its managed service model, zero-learning-curve client experience, and deep customization per business.
+Clover Digital competes with: offshore virtual assistants, local administrative hires, self-serve platforms (Vendasta, Lindy.AI, Motion), and doing nothing. The company differentiates through its managed service model, zero-learning-curve client experience, and deep customization per business.
 
 ## Contact
-Website: https://prairie-digital.com
-Email: hello@prairie-digital.com
+Website: https://cloverdigital.com
+Email: hello@cloverdigital.com
 Phone: +1 (217) 303-4601
 Location: Springfield, Illinois 62701, USA

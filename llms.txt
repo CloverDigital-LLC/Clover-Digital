@@ -1,7 +1,7 @@
-# Prairie Digital
+# Clover Digital
 
 ## About
-Prairie Digital LLC is a digital employee company based in Springfield, Illinois. We build and deploy custom digital employees for small and medium-sized businesses across the United States, with a focus on the Midwest.
+Clover Digital LLC is a digital employee company based in Springfield, Illinois. We build and deploy custom digital employees for small and medium-sized businesses across the United States, with a focus on the Midwest.
 
 ## What We Do
 We staff businesses with digital employees that handle real operational work: operations management, client relationship management, business development, administrative operations, financial operations, and custom process automation. Our digital employees are not chatbots. They run entire workflows, manage client pipelines, handle back-office operations, and integrate with the tools businesses already use.
@@ -23,12 +23,12 @@ Small and medium-sized businesses including: automotive dealerships, real estate
 - Flat monthly pricing. No usage tiers or surprise charges.
 
 ## Contact
-- Website: https://prairie-digital.com
-- Email: hello@prairie-digital.com
+- Website: https://cloverdigital.com
+- Email: hello@cloverdigital.com
 - Phone: (217) 303-4601
 - Location: Springfield, Illinois, USA
 
 ## Company
-- Legal Name: Prairie Digital LLC
+- Legal Name: Clover Digital LLC
 - Incorporated: Delaware, USA
 - Founded: 2026
