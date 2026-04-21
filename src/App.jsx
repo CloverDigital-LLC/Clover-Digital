@@ -498,7 +498,7 @@ function HomePage() {
         </div>
         <div className="hero-content">
 
-          <RevealDiv as="h1" delay={1}>Your new best employee <em style={{color: 'var(--green-500)'}}>doesn't sleep.</em></RevealDiv>
+          <RevealDiv as="h1" delay={1}>Your new best employee <em style={{color: '#ffffff'}}>doesn't sleep.</em></RevealDiv>
           <RevealDiv as="p" className="hero-sub" delay={2}>Digital employees that run entire workflows across your business. From operations and client management to the tasks you haven't had time to think about yet.</RevealDiv>
           <RevealDiv className="hero-actions" delay={3}>
             <button onClick={() => setShowGetStarted(true)} className="btn-primary">Meet your new hire <span>→</span></button>
