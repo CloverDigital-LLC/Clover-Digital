@@ -537,58 +537,6 @@ function HomePage() {
 
       {/* INBOX DEMO */}
       <section className="inbox-demo" id="in-practice">
-        {/* POV: overhead canopy */}
-        <div className="park-canopy" aria-hidden="true">
-          <svg viewBox="0 0 1440 180" preserveAspectRatio="none">
-            {/* far canopy — lighter, behind */}
-            <g fill="#1f4d35" opacity="0.7">
-              <circle cx="80" cy="18" r="58" />
-              <circle cx="200" cy="8" r="62" />
-              <circle cx="330" cy="24" r="55" />
-              <circle cx="470" cy="10" r="60" />
-              <circle cx="610" cy="26" r="58" />
-              <circle cx="760" cy="12" r="62" />
-              <circle cx="900" cy="22" r="56" />
-              <circle cx="1050" cy="8" r="60" />
-              <circle cx="1200" cy="22" r="58" />
-              <circle cx="1360" cy="14" r="62" />
-            </g>
-            {/* near canopy — darker, front */}
-            <g fill="#0f2a1d">
-              <circle cx="40" cy="42" r="50" />
-              <circle cx="150" cy="32" r="55" />
-              <circle cx="260" cy="46" r="52" />
-              <circle cx="370" cy="28" r="58" />
-              <circle cx="490" cy="44" r="50" />
-              <circle cx="610" cy="30" r="55" />
-              <circle cx="740" cy="48" r="54" />
-              <circle cx="860" cy="32" r="50" />
-              <circle cx="980" cy="46" r="56" />
-              <circle cx="1100" cy="28" r="52" />
-              <circle cx="1230" cy="42" r="56" />
-              <circle cx="1350" cy="30" r="50" />
-              <circle cx="1440" cy="44" r="56" />
-            </g>
-          </svg>
-        </div>
-        {/* sky cloud peeking through */}
-        <div className="park-cloud park-cloud-through" aria-hidden="true"></div>
-        {/* distant trees */}
-        <div className="park-distance" aria-hidden="true">
-          <div className="park-tree-dist park-tree-dist-1"></div>
-          <div className="park-tree-dist park-tree-dist-2"></div>
-        </div>
-        {/* grass horizon */}
-        <div className="park-ground" aria-hidden="true">
-          <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="grassBack" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#6a9a7a" /><stop offset="100%" stopColor="#4a8b67" /></linearGradient>
-              <linearGradient id="grassFront" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#4a8b67" /><stop offset="100%" stopColor="#2f6b4a" /></linearGradient>
-            </defs>
-            <path d="M0 55 Q240 40 480 50 Q720 35 960 48 Q1200 38 1440 52 L1440 120 L0 120Z" fill="url(#grassBack)" opacity="0.65" />
-            <path d="M0 78 Q240 68 480 74 Q720 62 960 72 Q1200 65 1440 76 L1440 120 L0 120Z" fill="url(#grassFront)" />
-          </svg>
-        </div>
         <div className="container">
           <div className="inbox-demo-layout">
             <div className="inbox-demo-text">
@@ -606,7 +554,7 @@ function HomePage() {
       <section className="capabilities" id="capabilities">
         <div className="wave-divider" style={{ top: '-1px', bottom: 'auto', transform: 'rotate(180deg)' }}>
           <svg viewBox="0 0 1440 60" preserveAspectRatio="none" style={{ height: '60px' }}>
-            <path d="M0 60 Q360 0 720 30 Q1080 60 1440 10 L1440 60Z" fill="#2f6b4a" />
+            <path d="M0 60 Q360 0 720 30 Q1080 60 1440 10 L1440 60Z" fill="#faf6ef" />
           </svg>
         </div>
         <div className="container">
