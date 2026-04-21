@@ -18,41 +18,52 @@ Code-side on-page SEO is already strong (schema, static content for crawlers, si
 
 ---
 
-## Priority Order (do these in order)
+## What's Already Done (verified 2026-04-21)
 
-1. ✅ **On-page schema & entity definitions** — shipped 2026-04-21 (this commit batch)
-2. 🔴 **Google Search Console** — verify the domain and submit the sitemap. Nothing ranks without this.
-3. 🔴 **Google Business Profile (video verification)** — already a pending task on prairie-fleet. Local pack ranking depends on this.
-4. 🔴 **Bing Webmaster Tools** — same as GSC but for Bing + ChatGPT's web browsing uses Bing index.
-5. 🟡 **LinkedIn Company Page** — highest-ROI social profile. Appears in SERP, shows up in Knowledge Graph.
-6. 🟡 **X (Twitter) @cloverdigital handle** — claim before someone else does.
-7. 🟡 **Crunchbase profile** — feeds AI assistants; Crunchbase data is heavily weighted by Perplexity and ChatGPT.
-8. 🟢 **Directory citations** (Clutch, Yelp, BBB, Springfield Chamber, etc.)
-9. 🟢 **Backlinks** (guest posts, local press, Illinois Tech Council, SCORE, etc.)
-10. 🟢 **Ongoing content** (blog cadence, case studies once clients go live)
+- ✅ **Google Search Console verified** (DNS TXT `google-site-verification=uA_iYCCBUtHL_zmiBJsnd9tTXnFuY6m4KZIWiTb5e8A`)
+- ✅ **Google Analytics 4** installed (`G-BGJBYZQXYL` in `index.html`)
+- ✅ **Google Workspace** active — MX records resolve, `hello@` and `pons@cloverdigital.com` live
+- ✅ **DMARC configured** (`v=DMARC1; p=quarantine`) — email auth good
+- ✅ **Google Business Profile created** (inherited from Prairie Digital, migrated to Clover Digital branding)
+- ✅ **On-page SEO** — schema (7 JSON-LD blocks), sitemap, robots, static HTML for crawlers, blog (7 posts), industry landing pages (4), FAQ (14 entries), BreadcrumbList, OG/Twitter cards, favicons
+- ✅ **`llms.txt` + `llms-full.txt`** with canonical entity definition + disambiguation vs. other Clover Digitals
+- ✅ **BRAND.md** — canonical brand doc in repo root
+- ✅ **SSL / Let's Encrypt** active
+- ✅ **Exact-match `.com` domain** (the biggest single SEO lever for a branded query)
+
+## What's Actually Still Missing
+
+Priority order by effort-to-impact:
+
+1. 🔴 **GBP video verification** — prairie-fleet task `e71e1253`, assigned to Mason. Biggest local-pack ranking lever. 15 min of filming + 3-5 days Google-side review.
+2. 🔴 **Bing Webmaster Tools** — not verified (no `msvalidate.01` meta, no DNS TXT). **ChatGPT web browsing and Copilot use Bing's index.** 5 min: import verification from GSC.
+3. 🟡 **LinkedIn Company Page** — confirmed 404 at `/company/clover-digital`. Memory confirms deferred pre-rebrand. ~20 min to create. Appears in SERP for branded queries.
+4. 🟡 **X handle `@cloverdigital`** — your existing `@masoncags` is Abstract-venture / personal. Corporate handle not claimed. 5 min to claim (handle-squat defense even if unused).
+5. 🟡 **Crunchbase listing** — no public entry in SERPs. ~30 min to submit. Heavy weight in Perplexity/ChatGPT answers.
+6. 🟢 **Directory citations** with consistent NAP (Clutch, BBB, Yelp, Springfield Chamber, Illinois SBDC, Product Hunt, G2, Capterra)
+7. 🟢 **Backlinks & press** (rebrand angle, first-client case study once live, HARO/Qwoted, local press)
+8. 🟢 **Ongoing content** (blog cadence, case studies)
+9. 🟢 **`sameAs` update** — once the above social URLs exist, add them all to `index.html` Organization schema + `llms-full.txt`
 
 Legend: 🔴 critical · 🟡 high · 🟢 compound over time
 
+**Skipping my original Priority 1 (GSC) and 2 (domain verify) — you've done both.**
+
 ---
 
-## 1. Google Search Console (CRITICAL)
+## 1. Google Search Console (ALREADY VERIFIED — use it)
 
-### Verify the domain
-1. Go to https://search.google.com/search-console
-2. Add property → **Domain property** (not URL-prefix) → enter `cloverdigital.com`
-3. Google will give you a TXT record to add to DNS. Add it at your registrar (wherever cloverdigital.com DNS lives).
-4. Verify. Wait up to 24h for propagation.
+Domain is verified (DNS TXT confirmed 2026-04-21). Login: https://search.google.com/search-console
 
-### First-week actions after verification
-- **Submit sitemap**: paste `https://cloverdigital.com/sitemap.xml`
-- **Request indexing** for: `/`, `/for/home-services.html`, `/for/law-firms.html`, `/for/real-estate.html`, `/for/creative-agencies.html`, and every blog post.
-- **Crawl stats**: check daily for first two weeks. You want to see "discovered, crawled, indexed."
-- **Coverage report**: fix anything flagged "Indexed, though blocked by robots.txt" or "Discovered — currently not indexed."
-- **Enhancements**: check Breadcrumb, FAQ, and Organization structured data all validate. They should — I already added them.
+### This-week actions (may already be done — confirm)
+- [ ] **Sitemap submitted**: `https://cloverdigital.com/sitemap.xml`
+- [ ] **Request indexing** for: `/`, `/for/home-services.html`, `/for/law-firms.html`, `/for/real-estate.html`, `/for/creative-agencies.html`, and every blog post
+- [ ] **Re-request indexing on `/`** now that the entity-definition paragraph + founder schema shipped today (2026-04-21)
 
 ### Ongoing
-- Weekly: check "Performance" → filter by query "clover digital" — we want to see impressions and clicks climbing, average position improving.
-- Monthly: audit coverage, fix any de-indexed pages.
+- Weekly: Performance → filter by query "clover digital" — watch impressions/clicks/average position
+- Weekly: Coverage → fix anything "Discovered — currently not indexed"
+- Enhancements: verify Breadcrumb, FAQ, Organization structured data all pass (they should — 7 JSON-LD blocks validated locally before push)
 
 ---
 
@@ -251,21 +262,31 @@ If any of them conflate you with another Clover Digital, check your Bing Webmast
 
 ## 10. Next Concrete Actions (this week)
 
-Mason:
-1. Verify domain in Google Search Console (30 min — needs DNS access)
-2. Submit sitemap to GSC
-3. Verify in Bing Webmaster Tools (import from GSC — 5 min)
-4. Schedule GBP video verification (prairie-fleet task e71e1253)
-5. Claim @cloverdigital on LinkedIn, X, Instagram, YouTube, Threads, Bluesky, Crunchbase (60 min one sitting)
-6. Update `index.html` Organization `sameAs` array with the real URLs of the above
+Given you already verified GSC and installed GA4, the actual remaining work:
 
-Claude Code can help with:
-- Drafting the LinkedIn company description, X bio, Crunchbase listing from `llms-full.txt`
-- Writing the directory-submission copy templates
+### ~20 minutes of clicks
+1. [ ] **Bing Webmaster Tools** — https://www.bing.com/webmasters → add site → import verification from GSC → submit sitemap (5 min)
+2. [ ] **Confirm sitemap submitted in GSC** if you haven't already (1 min)
+3. [ ] **Request indexing in GSC** for `/` after today's schema changes propagate (2 min — do it tomorrow so Fastly has caught up)
+
+### ~60 minutes of social claiming (do in one sitting)
+4. [ ] LinkedIn Company Page at `/company/cloverdigital` (slug is free)
+5. [ ] X `@cloverdigital` (verify availability first — handle-squatters are fast)
+6. [ ] Crunchbase submit-organization form
+7. [ ] Facebook/IG/YouTube/Threads/Bluesky handle-squat defense
+8. [ ] Tell me the URLs of whatever you claim and I'll batch-update the `sameAs` array in JSON-LD + `llms-full.txt`
+
+### 15 min of filming + ≤5 days Google-side
+9. [ ] GBP video verification (prairie-fleet task `e71e1253`)
+
+Claude Code can help (ask when ready):
+- Drafting LinkedIn company description / X bio / Crunchbase listing from `llms-full.txt`
+- Writing directory-submission copy templates with correct NAP
 - Writing one blog post per week
-- Drafting press pitch emails
-- Writing the Google Business Profile description
-- Generating the first round of reviews-request email templates for pilot clients
+- Drafting press pitch emails (rebrand angle)
+- Writing the GBP long description (750+ chars, category-optimized)
+- Drafting review-request email templates for pilot clients once they go live
+- Batch-updating `sameAs` in schema + llms-full.txt once you have real URLs
 
 ---
 
