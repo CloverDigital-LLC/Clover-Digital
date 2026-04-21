@@ -186,6 +186,7 @@ const INBOX_THREAD = [
 
 function InboxThread() {
   const rootRef = useRef(null)
+  const messagesRef = useRef(null)
   const [shown, setShown] = useState(0)
   const [inView, setInView] = useState(false)
 
@@ -210,13 +211,20 @@ function InboxThread() {
   }, [inView])
 
   const visible = INBOX_THREAD.slice(0, shown)
+  const nextMsg = INBOX_THREAD[shown]
+  const showTyping = inView && nextMsg && nextMsg.isClover
+
+  useEffect(() => {
+    const el = messagesRef.current
+    if (!el) return
+    el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+  }, [shown, showTyping])
+
   const grouped = visible.map((m, i) => {
     const next = visible[i + 1]
     const isLastOfGroup = !next || next.isClover !== m.isClover
     return { ...m, isLastOfGroup }
   })
-  const nextMsg = INBOX_THREAD[shown]
-  const showTyping = inView && nextMsg && nextMsg.isClover
 
   return (
     <div className="imsg-phone" ref={rootRef} role="region" aria-label="Example text thread with a Clover digital employee">
@@ -268,7 +276,7 @@ function InboxThread() {
           </div>
         </div>
         <div className="imsg-timestamp"><span>Today</span> 7:12 AM</div>
-        <div className="imsg-messages">
+        <div className="imsg-messages" ref={messagesRef}>
           {grouped.map((m, i) => (
             <div key={i} className={`imsg-row ${m.isClover ? 'from-them' : 'from-me'} ${m.isLastOfGroup ? 'has-tail' : ''}`}>
               <div className="imsg-bubble-wrap">
