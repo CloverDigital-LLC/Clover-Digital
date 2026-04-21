@@ -5,13 +5,13 @@
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   <url>
     <loc>https://cloverdigital.com/</loc>
-    <lastmod>2026-04-04</lastmod>
+    <lastmod>2026-04-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://cloverdigital.com/blog/</loc>
-    <lastmod>2026-04-04</lastmod>
+    <lastmod>2026-04-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -19,25 +19,25 @@
   <!-- Industry Landing Pages -->
   <url>
     <loc>https://cloverdigital.com/for/home-services.html</loc>
-    <lastmod>2026-04-04</lastmod>
+    <lastmod>2026-04-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://cloverdigital.com/for/law-firms.html</loc>
-    <lastmod>2026-04-04</lastmod>
+    <lastmod>2026-04-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://cloverdigital.com/for/real-estate.html</loc>
-    <lastmod>2026-04-04</lastmod>
+    <lastmod>2026-04-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://cloverdigital.com/for/creative-agencies.html</loc>
-    <lastmod>2026-04-04</lastmod>
+    <lastmod>2026-04-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -83,19 +83,19 @@
   </url>
   <url>
     <loc>https://cloverdigital.com/blog/how-to-handle-business-calls-after-hours.html</loc>
-    <lastmod>2026-04-04</lastmod>
+    <lastmod>2026-04-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://cloverdigital.com/blog/ai-vs-virtual-assistant-for-small-business.html</loc>
-    <lastmod>2026-04-04</lastmod>
+    <lastmod>2026-04-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://cloverdigital.com/blog/signs-your-small-business-needs-automation.html</loc>
-    <lastmod>2026-04-04</lastmod>
+    <lastmod>2026-04-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
