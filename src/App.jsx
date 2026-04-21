@@ -540,9 +540,8 @@ function HomePage() {
         <div className="container">
           <div className="inbox-demo-layout">
             <div className="inbox-demo-text">
-              <RevealDiv as="span" className="section-label">In Practice</RevealDiv>
-              <RevealDiv as="h2" delay={1}>One text.<br />Done by end of day.</RevealDiv>
-              <RevealDiv as="p" className="section-subtitle" delay={2}>A typical Monday morning handoff. Scheduling, invoicing, follow-up&nbsp;— handled the way a real team member would.</RevealDiv>
+              <RevealDiv as="h2">One text.<br />Done by end of day.</RevealDiv>
+              <RevealDiv as="p" className="section-subtitle" delay={1}>A typical Monday morning handoff. Scheduling, invoicing, follow-up&nbsp;— handled the way a real team member would.</RevealDiv>
             </div>
             <RevealDiv className="inbox-demo-frame" delay={2}>
               <InboxThread />
