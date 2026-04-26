@@ -1,0 +1,64 @@
+name: Quality checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  audit-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Audit (fail on moderate or higher)
+        run: npm audit --audit-level=moderate
+
+      - name: Validate JSON-LD blocks in index.html
+        run: |
+          python3 - <<'PY'
+          import re, json, sys
+          with open('index.html') as f:
+              html = f.read()
+          blocks = re.findall(r'<script type="application/ld\+json">\s*(.*?)\s*</script>', html, re.DOTALL)
+          if not blocks:
+              print('::error::No JSON-LD blocks found in index.html')
+              sys.exit(1)
+          fail = False
+          for i, b in enumerate(blocks):
+              try:
+                  d = json.loads(b)
+                  print(f'  [{i}] OK @type={d.get("@type", "?")}')
+              except Exception as e:
+                  print(f'::error::JSON-LD block {i} failed to parse: {e}')
+                  fail = True
+          if fail:
+              sys.exit(1)
+          print(f'All {len(blocks)} JSON-LD blocks valid')
+          PY
+
+      - name: Verify build
+        run: |
+          # Run vite build into a temp directory; we don't want to mutate index.html in CI
+          npx vite build
+          test -f dist/index.html || (echo '::error::vite build did not produce dist/index.html' && exit 1)
+          echo "Build OK"
+
+      - name: Check sitemap is valid XML
+        run: |
+          python3 -c "import xml.etree.ElementTree as ET; ET.parse('sitemap.xml'); print('sitemap.xml valid')"
+
+      - name: Check rss is valid XML
+        run: |
+          python3 -c "import xml.etree.ElementTree as ET; ET.parse('rss.xml'); print('rss.xml valid')"

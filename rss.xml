@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Clover Digital — Blog</title>
+    <link>https://cloverdigital.com/blog/</link>
+    <description>Notes on digital employees, small-business automation, and running a managed AI workforce. From Clover Digital, Springfield IL.</description>
+    <language>en-us</language>
+    <copyright>© 2026 Clover Digital LLC. All rights reserved.</copyright>
+    <lastBuildDate>Sun, 26 Apr 2026 20:04:24 +0000</lastBuildDate>
+    <atom:link href="https://cloverdigital.com/rss.xml" rel="self" type="application/rss+xml" />
+    <generator>Clover Digital build pipeline</generator>
+    <managingEditor>hello@cloverdigital.com (Clover Digital)</managingEditor>
+    <webMaster>hello@cloverdigital.com (Clover Digital)</webMaster>
+    <item>
+      <title><![CDATA[AI Employee vs. Virtual Assistant: Which is Right for Your Small Business?]]></title>
+      <link>https://cloverdigital.com/blog/ai-vs-virtual-assistant-for-small-business.html</link>
+      <guid isPermaLink="true">https://cloverdigital.com/blog/ai-vs-virtual-assistant-for-small-business.html</guid>
+      <pubDate>Sat, 04 Apr 2026 00:00:00 +0000</pubDate>
+      <description><![CDATA[Honest comparison of AI employees vs. virtual assistants for small businesses. Learn the pros, cons, costs, and when each option makes sense for your business.]]></description>
+    </item>
+    <item>
+      <title><![CDATA[How to Handle Business Calls After Hours Without Hiring Night Staff]]></title>
+      <link>https://cloverdigital.com/blog/how-to-handle-business-calls-after-hours.html</link>
+      <guid isPermaLink="true">https://cloverdigital.com/blog/how-to-handle-business-calls-after-hours.html</guid>
+      <pubDate>Sat, 04 Apr 2026 00:00:00 +0000</pubDate>
+      <description><![CDATA[Discover how small businesses handle after-hours calls without hiring night staff. Compare voicemail, answering services, and AI digital employees for 24/7 customer service.]]></description>
+    </item>
+    <item>
+      <title><![CDATA[7 Signs Your Small Business Needs Automation (And What to Do About It)]]></title>
+      <link>https://cloverdigital.com/blog/signs-your-small-business-needs-automation.html</link>
+      <guid isPermaLink="true">https://cloverdigital.com/blog/signs-your-small-business-needs-automation.html</guid>
+      <pubDate>Sat, 04 Apr 2026 00:00:00 +0000</pubDate>
+      <description><![CDATA[Recognize the 7 warning signs that your small business needs automation. From missed follow-ups to late invoices, learn what to automate and how to start.]]></description>
+    </item>
+    <item>
+      <title><![CDATA[Digital Employees for Real Estate Agents and Brokerages]]></title>
+      <link>https://cloverdigital.com/blog/digital-employees-for-real-estate-agents.html</link>
+      <guid isPermaLink="true">https://cloverdigital.com/blog/digital-employees-for-real-estate-agents.html</guid>
+      <pubDate>Sat, 28 Mar 2026 00:00:00 +0000</pubDate>
+      <description><![CDATA[How real estate agents use digital employees to manage leads, schedule showings, handle client follow-ups, and run their pipeline without hiring an assistant.]]></description>
+    </item>
+    <item>
+      <title><![CDATA[Digital Employees for Service Businesses: Plumbing, HVAC, Contractors, and More]]></title>
+      <link>https://cloverdigital.com/blog/digital-employees-for-service-businesses.html</link>
+      <guid isPermaLink="true">https://cloverdigital.com/blog/digital-employees-for-service-businesses.html</guid>
+      <pubDate>Sat, 28 Mar 2026 00:00:00 +0000</pubDate>
+      <description><![CDATA[How plumbers, HVAC companies, contractors, and other service businesses use digital employees to handle scheduling, follow-ups, invoicing, and client management without hiring.]]></description>
+    </item>
+    <item>
+      <title><![CDATA[How Much Does a Virtual Employee Cost in 2026?]]></title>
+      <link>https://cloverdigital.com/blog/how-much-does-a-virtual-employee-cost.html</link>
+      <guid isPermaLink="true">https://cloverdigital.com/blog/how-much-does-a-virtual-employee-cost.html</guid>
+      <pubDate>Sat, 28 Mar 2026 00:00:00 +0000</pubDate>
+      <description><![CDATA[A real breakdown of virtual employee costs for small businesses in 2026. Compare hiring, offshore VAs, software platforms, and managed digital employees.]]></description>
+    </item>
+    <item>
+      <title><![CDATA[How to Automate Your Small Business Without Learning New Software]]></title>
+      <link>https://cloverdigital.com/blog/how-to-automate-your-small-business-without-learning-software.html</link>
+      <guid isPermaLink="true">https://cloverdigital.com/blog/how-to-automate-your-small-business-without-learning-software.html</guid>
+      <pubDate>Sat, 28 Mar 2026 00:00:00 +0000</pubDate>
+      <description><![CDATA[You do not need to be technical to automate your business. Here is how small business owners are getting operational help without learning a single new tool.]]></description>
+    </item>
+  </channel>
+</rss>

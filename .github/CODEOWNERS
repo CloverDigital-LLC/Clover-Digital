@@ -1,0 +1,10 @@
+# Default owner for everything
+* @Masoncags-tech
+
+# Brand-critical files: any change must be acked by the founder
+/BRAND.md @Masoncags-tech
+/SEO_PLAYBOOK.md @Masoncags-tech
+/index.html @Masoncags-tech
+/llms.txt @Masoncags-tech
+/llms-full.txt @Masoncags-tech
+/LICENSE @Masoncags-tech
