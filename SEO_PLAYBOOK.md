@@ -122,7 +122,7 @@ Claim the handle `cloverdigital` on each before a squatter does. Even if you don
 - [ ] **Reddit** — u/cloverdigital
 - [ ] **Bluesky** — cloverdigital.bsky.social
 - [ ] **Threads** — @cloverdigital
-- [ ] **GitHub Organization** — consider moving Masoncags-tech/Clover-Digital under a `@cloverdigital` org. Costs nothing, adds another `sameAs` target.
+- [x] **GitHub Organization** — repo lives at https://github.com/cloverdigital-llc/Clover-Digital (transferred 2026-04-26 from Masoncags-tech personal account). `sameAs` already points at the org.
 
 **Once these exist**, update `index.html`'s Organization schema `sameAs` array to include every live URL, and add them to `llms-full.txt` under the Company section. This is how Google builds the Knowledge Graph entity for "Clover Digital."
 
