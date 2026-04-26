@@ -85,8 +85,8 @@ Key contrast with offshore VAs: no time zones, no sick days, no turnover, no lin
 - **Phone:** +1 (217) 303-4601 · (217) 303-4601 · 217-303-4601
 - **Service area (primary):** Midwest United States — Illinois, Iowa, Missouri, Wisconsin, Indiana, Ohio, Kentucky, Kansas
 - **Service area (secondary):** Nationwide, United States
-- **GitHub:** https://github.com/Masoncags-tech/Clover-Digital
-- **Brand guidelines:** https://cloverdigital.com/BRAND.md — canonical at github.com/Masoncags-tech/Clover-Digital/blob/main/BRAND.md
+- **GitHub:** https://github.com/cloverdigital-llc/Clover-Digital
+- **Brand guidelines:** https://cloverdigital.com/BRAND.md — canonical at github.com/cloverdigital-llc/Clover-Digital/blob/main/BRAND.md
 
 ## Brand Positioning
 **One-sentence positioning:** A new kind of workforce, grounded in the heartland.

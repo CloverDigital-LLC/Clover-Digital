@@ -1,7 +1,7 @@
 # Clover Digital — Brand Guidelines
 
 **Version 0.1 · April 2026**
-**Canonical source:** [github.com/Masoncags-tech/Clover-Digital/blob/main/BRAND.md](https://github.com/Masoncags-tech/Clover-Digital/blob/main/BRAND.md)
+**Canonical source:** [github.com/cloverdigital-llc/Clover-Digital/blob/main/BRAND.md](https://github.com/cloverdigital-llc/Clover-Digital/blob/main/BRAND.md)
 
 Design tokens live in [`src/index.css`](src/index.css) `:root`. If anything below ever conflicts with the code, the code wins — update this doc.
 

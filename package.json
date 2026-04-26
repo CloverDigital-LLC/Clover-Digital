@@ -1,7 +1,14 @@
 {
   "name": "clover-digital-site",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "Marketing site for Clover Digital — digital employees for small business.",
+  "homepage": "https://cloverdigital.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cloverdigital-llc/Clover-Digital.git"
+  },
+  "license": "UNLICENSED",
   "type": "module",
   "scripts": {
     "dev": "vite",
