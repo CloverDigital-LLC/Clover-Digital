@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+/* Enable `dark:` utilities when an ancestor has `.dark` */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ===== Clover Digital design tokens (Tailwind v4 @theme) ===== */
+@theme {
+  /* Warm dark surfaces — used in dark mode. Deep forest, not cool gray. */
+  --color-night-900: #0b1612;
+  --color-night-800: #131e18;
+  --color-night-700: #1c2a23;
+  --color-night-600: #25382e;
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-sans: "Inter Tight", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Greens — the Clover family (matches BRAND.md) */
+  --color-clover-50: #eef3eb;
+  --color-clover-100: #dfe9df;
+  --color-clover-200: #c5d8cb;
+  --color-clover-300: #a7c4b2;
+  --color-clover-400: #6a9a7a;
+  --color-clover-500: #4a8b67;
+  --color-clover-700: #2f6b4a;
+  --color-clover-800: #1f4d35;
+  --color-clover-900: #0f2a1d;
+
+  /* Warm neutrals */
+  --color-cream-50: #fdfaf3;
+  --color-cream-100: #faf6ef;
+  --color-cream-200: #f3ecdf;
+  --color-cream-300: #e8dec9;
+
+  /* Ink (text) */
+  --color-ink-400: #8a8a7c;
+  --color-ink-500: #6b6b5e;
+  --color-ink-700: #3a3a32;
+  --color-ink-900: #1a1a16;
+
+  /* Accents */
+  --color-ochre-100: #f5e4c5;
+  --color-ochre-300: #e3b878;
+  --color-ochre-500: #c98b3a;
+  --color-rust-500: #a85a3a;
+
+  --shadow-card: 0 1px 2px rgb(15 42 29 / 0.04), 0 4px 14px rgb(15 42 29 / 0.05);
+  --shadow-card-hover: 0 1px 2px rgb(15 42 29 / 0.04), 0 8px 24px rgb(15 42 29 / 0.08);
+}
+
+/* Base setup */
+:root {
+  font-family: var(--font-sans);
+  color: var(--color-ink-900);
+  background: var(--color-cream-100);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body, #root { height: 100%; margin: 0; }
+body { background: var(--color-cream-100); }
+
+/* ===== Dark mode: flip the surface + ink scale, keep accents ===== */
+.dark {
+  /* Cream tones become deep warm-night surfaces */
+  --color-cream-50:  #131e18;   /* card bg */
+  --color-cream-100: #0b1612;   /* body bg */
+  --color-cream-200: #1c2a23;   /* muted surface (toggles, badges) */
+  --color-cream-300: #25382e;   /* borders, dividers */
+
+  /* Ink tones flip to light */
+  --color-ink-900: #faf6ef;     /* primary text */
+  --color-ink-700: #e8dec9;     /* secondary text */
+  --color-ink-500: #a7c4b2;     /* muted text */
+  --color-ink-400: #8a9a92;     /* tertiary text */
+
+  /* Clover accents stay bright on dark — sage greens read well */
+  /* (Leaving --color-clover-* unchanged) */
+}
+.dark body { background: var(--color-cream-100); color: var(--color-ink-900); }
+
+h1, h2, h3, h4, h5 { font-family: var(--font-display); }
+
+/* Subtle paper grain on the body */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(circle at 30% 20%, rgb(31 77 53 / 0.025) 0, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgb(201 139 58 / 0.02) 0, transparent 50%);
+}
+.dark body::before {
+  background-image:
+    radial-gradient(circle at 30% 20%, rgb(74 139 103 / 0.06) 0, transparent 55%),
+    radial-gradient(circle at 80% 70%, rgb(201 139 58 / 0.04) 0, transparent 55%);
+}
+
+#root { position: relative; z-index: 1; }
+
+/* Card divider */
+.card-divider { background: linear-gradient(90deg, transparent 0, var(--color-cream-300) 12%, var(--color-cream-300) 88%, transparent 100%); }
+.dark .card-divider { background: linear-gradient(90deg, transparent 0, var(--color-night-600) 12%, var(--color-night-600) 88%, transparent 100%); }
+
+/* Soft scrollbars */
+.scroll-soft::-webkit-scrollbar { width: 6px; height: 6px; }
+.scroll-soft::-webkit-scrollbar-thumb { background: var(--color-clover-200); border-radius: 6px; }
+.scroll-soft::-webkit-scrollbar-track { background: transparent; }
+.dark .scroll-soft::-webkit-scrollbar-thumb { background: var(--color-clover-700); }
+
+/* Pulse for "live" dot */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.pulse-dot { animation: pulse-soft 2.4s ease-in-out infinite; }
+
+/* Brief ring-flash when an attention row scroll-spotlights a card.
+   Triggered by scrollAndSpotlight() in BriefingCard. */
+@keyframes attention-spotlight {
+  0%   { box-shadow: 0 0 0 0 rgba(212, 162, 79, 0); }
+  20%  { box-shadow: 0 0 0 4px rgba(212, 162, 79, 0.5); }
+  100% { box-shadow: 0 0 0 0 rgba(212, 162, 79, 0); }
+}
+.attention-spotlight {
+  animation: attention-spotlight 1.5s ease-out;
+  scroll-margin-top: 80px; /* keep the sticky header from clipping it */
+}

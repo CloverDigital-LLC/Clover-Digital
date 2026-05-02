@@ -54,6 +54,7 @@ Then commit and push to `main` — GitHub Actions deploys to Pages automatically
 | `src/App.jsx` | Main React component (single-file app — sections, modals, iMessage demo, FAQ) |
 | `src/index.css` | All styling (CSS variables, components, responsive rules) |
 | `src/main.jsx` | Vite entrypoint |
+| `apps/operations-dashboard/` | Internal Clover Ops dashboard app, deployed separately on Vercel |
 | `assets/` | **Tracked.** Built JS/CSS bundles for GitHub Pages |
 | `dist/` | **Gitignored.** Vite build output (used as a staging area by `build.sh`) |
 | `for/*.html` | Industry landing pages (home services, law firms, real estate, creative agencies) |
