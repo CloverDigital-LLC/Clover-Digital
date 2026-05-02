@@ -55,6 +55,7 @@ Then commit and push to `main` — GitHub Actions deploys to Pages automatically
 | `src/index.css` | All styling (CSS variables, components, responsive rules) |
 | `src/main.jsx` | Vite entrypoint |
 | `apps/operations-dashboard/` | Internal Clover Ops dashboard app, deployed separately on Vercel |
+| `packages/clover-digital-mcp/` | Clover Ops MCP server for teammate and agent access |
 | `assets/` | **Tracked.** Built JS/CSS bundles for GitHub Pages |
 | `dist/` | **Gitignored.** Vite build output (used as a staging area by `build.sh`) |
 | `for/*.html` | Industry landing pages (home services, law firms, real estate, creative agencies) |
