@@ -8,11 +8,10 @@
 import { useQuery } from '@tanstack/react-query'
 import {
   cloverOpsConfigured,
-  cloverOpsSessionReady,
-  cloverOpsSupabase,
   supabase,
   supabaseConfigured,
 } from '../lib/supabase'
+import { cloverOpsReadReady, selectCloverOps } from '../lib/cloverOpsBridge'
 import type {
   AgentTaskRow,
   KnowledgeRow,
@@ -97,7 +96,7 @@ export function useProjectTasks(venture: string) {
     queryKey: ['project-tasks', viewRole, venture],
     queryFn: async (): Promise<ProjectTaskBuckets> => {
       const sevenDaysAgo = new Date(Date.now() - 7 * 86_400_000).toISOString()
-      const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
+      const cloverReady = await cloverOpsReadReady()
       const fleetPromise = viewRole === 'admin' && supabaseConfigured && !isCloverProject(venture)
         ? (async () => {
             const [openRes, doneRes] = await Promise.all([
@@ -131,22 +130,30 @@ export function useProjectTasks(venture: string) {
         cloverReady && wantsCloverOps([venture])
           ? (async () => {
               const [openRes, doneRes] = await Promise.all([
-                cloverOpsSupabase
-                  .from('cd_tasks')
-                  .select(CLOVER_TASK_COLUMNS)
-                  .is('archived_at', null)
-                  .not('status', 'in', '(completed,cancelled,failed)')
-                  .order('priority', { ascending: true, nullsFirst: false })
-                  .order('created_at', { ascending: false })
-                  .limit(80),
-                cloverOpsSupabase
-                  .from('cd_tasks')
-                  .select(CLOVER_TASK_COLUMNS)
-                  .is('archived_at', null)
-                  .eq('status', 'completed')
-                  .gte('completed_at', sevenDaysAgo)
-                  .order('completed_at', { ascending: false })
-                  .limit(20),
+                selectCloverOps<CloverTaskRow>('cd_tasks', CLOVER_TASK_COLUMNS, {
+                  filters: [
+                    { type: 'is', column: 'archived_at', value: null },
+                    {
+                      type: 'notIn',
+                      column: 'status',
+                      values: ['completed', 'cancelled', 'failed'],
+                    },
+                  ],
+                  order: [
+                    { column: 'priority', ascending: true, nullsFirst: false },
+                    { column: 'created_at', ascending: false },
+                  ],
+                  limit: 80,
+                }),
+                selectCloverOps<CloverTaskRow>('cd_tasks', CLOVER_TASK_COLUMNS, {
+                  filters: [
+                    { type: 'is', column: 'archived_at', value: null },
+                    { type: 'eq', column: 'status', value: 'completed' },
+                    { type: 'gte', column: 'completed_at', value: sevenDaysAgo },
+                  ],
+                  order: [{ column: 'completed_at', ascending: false }],
+                  limit: 20,
+                }),
               ])
               if (openRes.error || doneRes.error) {
                 warnCloverOps('project tasks', openRes.error ?? doneRes.error!)
@@ -189,7 +196,7 @@ export function useProjectGoals(venture: string) {
   return useQuery({
     queryKey: ['project-goals', viewRole, venture],
     queryFn: async (): Promise<GoalRow[]> => {
-      const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
+      const cloverReady = await cloverOpsReadReady()
       const fleetPromise = viewRole === 'admin' && supabaseConfigured && !isCloverProject(venture)
         ? (async () => {
             const { data, error } = await supabase
@@ -206,11 +213,16 @@ export function useProjectGoals(venture: string) {
       const cloverPromise =
         cloverReady && wantsCloverOps([venture])
           ? (async () => {
-              const { data, error } = await cloverOpsSupabase
-                .from('cd_goals')
-                .select(CLOVER_GOAL_COLUMNS)
-                .order('priority', { ascending: true, nullsFirst: false })
-                .order('target_date', { ascending: true, nullsFirst: false })
+              const { data, error } = await selectCloverOps<CloverGoalRow>(
+                'cd_goals',
+                CLOVER_GOAL_COLUMNS,
+                {
+                  order: [
+                    { column: 'priority', ascending: true, nullsFirst: false },
+                    { column: 'target_date', ascending: true, nullsFirst: false },
+                  ],
+                },
+              )
               if (error) {
                 warnCloverOps('project goals', error)
                 return [] as GoalRow[]
@@ -234,7 +246,7 @@ export function useProjectKnowledge(venture: string, limit = 12) {
   return useQuery({
     queryKey: ['project-knowledge', viewRole, venture, limit],
     queryFn: async (): Promise<KnowledgeRow[]> => {
-      const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
+      const cloverReady = await cloverOpsReadReady()
       const fleetPromise = viewRole === 'admin' && supabaseConfigured && !isCloverProject(venture)
         ? (async () => {
             const { data, error } = await supabase
@@ -251,11 +263,14 @@ export function useProjectKnowledge(venture: string, limit = 12) {
       const cloverPromise =
         cloverReady && wantsCloverOps([venture])
           ? (async () => {
-              const { data, error } = await cloverOpsSupabase
-                .from('cd_knowledge')
-                .select(CLOVER_KNOWLEDGE_COLUMNS)
-                .order('created_at', { ascending: false })
-                .limit(limit)
+              const { data, error } = await selectCloverOps<CloverKnowledgeRow>(
+                'cd_knowledge',
+                CLOVER_KNOWLEDGE_COLUMNS,
+                {
+                  order: [{ column: 'created_at', ascending: false }],
+                  limit,
+                },
+              )
               if (error) {
                 warnCloverOps('project knowledge', error)
                 return [] as KnowledgeRow[]
@@ -287,7 +302,7 @@ export function useProjectAgents(venture: string) {
     queryKey: ['project-agents', viewRole, venture],
     queryFn: async (): Promise<Array<{ agent: string; touch_count: number }>> => {
       const since = new Date(Date.now() - 30 * 86_400_000).toISOString()
-      const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
+      const cloverReady = await cloverOpsReadReady()
       const [tasksRes, sessionsRes, knowledgeRes, cloverTasksRes, cloverKnowledgeRes] = await Promise.all([
         viewRole === 'admin' && supabaseConfigured
           && !isCloverProject(venture)
@@ -312,17 +327,25 @@ export function useProjectAgents(venture: string) {
               .gte('created_at', since)
           : Promise.resolve({ data: [], error: null }),
         cloverReady && wantsCloverOps([venture])
-          ? cloverOpsSupabase
-              .from('cd_tasks')
-              .select('assigned_to')
-              .is('archived_at', null)
-              .gte('created_at', since)
+          ? selectCloverOps<{ assigned_to: string | null }>(
+              'cd_tasks',
+              'assigned_to',
+              {
+                filters: [
+                  { type: 'is', column: 'archived_at', value: null },
+                  { type: 'gte', column: 'created_at', value: since },
+                ],
+              },
+            )
           : Promise.resolve({ data: [], error: null }),
         cloverReady && wantsCloverOps([venture])
-          ? cloverOpsSupabase
-              .from('cd_knowledge')
-              .select('source_agent')
-              .gte('created_at', since)
+          ? selectCloverOps<{ source_agent: string | null }>(
+              'cd_knowledge',
+              'source_agent',
+              {
+                filters: [{ type: 'gte', column: 'created_at', value: since }],
+              },
+            )
           : Promise.resolve({ data: [], error: null }),
       ])
       // Sessions / knowledge may fail silently if RLS blocks; treat as empty.

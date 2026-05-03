@@ -1,11 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import {
   cloverOpsConfigured,
-  cloverOpsSessionReady,
-  cloverOpsSupabase,
   supabase,
   supabaseConfigured,
 } from '../lib/supabase'
+import { cloverOpsReadReady, selectCloverOps } from '../lib/cloverOpsBridge'
 import { useVentureFilter, useVentureScope } from '../context/VentureFilterContext'
 import type { AgentTaskRow, GoalRow, MasonCommitmentRow } from '../lib/types'
 import {
@@ -42,7 +41,7 @@ export function useGoals({ includeClosed = false } = {}) {
   return useQuery({
     queryKey: ['goals', viewRole, ventures?.join(',') ?? 'all', includeClosed],
     queryFn: async () => {
-      const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
+      const cloverReady = await cloverOpsReadReady()
       const fleetVentures = withoutCloverVentures(ventures)
       const fleetPromise = viewRole === 'admin' && supabaseConfigured
         ? (async () => {
@@ -64,13 +63,19 @@ export function useGoals({ includeClosed = false } = {}) {
       const cloverPromise =
         cloverReady && wantsCloverOps(ventures)
           ? (async () => {
-              let q = cloverOpsSupabase
-                .from('cd_goals')
-                .select(CLOVER_GOAL_COLUMNS)
-                .order('priority', { ascending: true, nullsFirst: false })
-                .order('target_date', { ascending: true, nullsFirst: false })
-              if (!includeClosed) q = q.not('status', 'in', '(done,dropped)')
-              const { data, error } = await q
+              const { data, error } = await selectCloverOps<CloverGoalRow>(
+                'cd_goals',
+                CLOVER_GOAL_COLUMNS,
+                {
+                  filters: includeClosed
+                    ? []
+                    : [{ type: 'notIn', column: 'status', values: ['done', 'dropped'] }],
+                  order: [
+                    { column: 'priority', ascending: true, nullsFirst: false },
+                    { column: 'target_date', ascending: true, nullsFirst: false },
+                  ],
+                },
+              )
               if (error) {
                 warnCloverOps('goals', error)
                 return [] as GoalRow[]
@@ -106,7 +111,7 @@ export function useGoalsProgress(goalIds: string[]) {
       if (goalIds.length === 0) return {}
       const fleetGoalIds = goalIds.filter((id) => !isCloverOpsId(id))
       const cloverGoalIds = goalIds.filter(isCloverOpsId)
-      const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
+      const cloverReady = await cloverOpsReadReady()
 
       const [tasksRes, commitsRes, cloverTasksRes] = await Promise.all([
         supabaseConfigured && fleetGoalIds.length > 0
@@ -119,11 +124,20 @@ export function useGoalsProgress(goalIds: string[]) {
               .in('goal_id', fleetGoalIds)
           : Promise.resolve({ data: [], error: null }),
         cloverReady && cloverGoalIds.length > 0
-          ? cloverOpsSupabase
-              .from('cd_tasks')
-              .select('goal_id, status')
-              .is('archived_at', null)
-              .in('goal_id', cloverGoalIds.map(fromCloverOpsId))
+          ? selectCloverOps<{ goal_id: string; status: string }>(
+              'cd_tasks',
+              'goal_id, status',
+              {
+                filters: [
+                  { type: 'is', column: 'archived_at', value: null },
+                  {
+                    type: 'in',
+                    column: 'goal_id',
+                    values: cloverGoalIds.map(fromCloverOpsId),
+                  },
+                ],
+              },
+            )
           : Promise.resolve({ data: [], error: null }),
       ])
       if (tasksRes.error) throw tasksRes.error
@@ -188,23 +202,24 @@ export function useGoalDetail(id: string | null) {
       if (isCloverOpsId(id)) {
         const rawId = fromCloverOpsId(id)
         const [goalRes, tasksRes] = await Promise.all([
-          cloverOpsSupabase
-            .from('cd_goals')
-            .select(CLOVER_GOAL_COLUMNS)
-            .eq('id', rawId)
-            .maybeSingle(),
-          cloverOpsSupabase
-            .from('cd_tasks')
-            .select(CLOVER_TASK_COLUMNS)
-            .is('archived_at', null)
-            .eq('goal_id', rawId)
-            .order('created_at', { ascending: false }),
+          selectCloverOps<CloverGoalRow>('cd_goals', CLOVER_GOAL_COLUMNS, {
+            filters: [{ type: 'eq', column: 'id', value: rawId }],
+            limit: 1,
+          }),
+          selectCloverOps<CloverTaskRow>('cd_tasks', CLOVER_TASK_COLUMNS, {
+            filters: [
+              { type: 'is', column: 'archived_at', value: null },
+              { type: 'eq', column: 'goal_id', value: rawId },
+            ],
+            order: [{ column: 'created_at', ascending: false }],
+          }),
         ])
         if (goalRes.error) throw goalRes.error
         if (tasksRes.error) throw tasksRes.error
-        if (!goalRes.data) return null
+        const goalRow = goalRes.data?.[0]
+        if (!goalRow) return null
         return {
-          goal: adaptCloverGoal(goalRes.data as CloverGoalRow),
+          goal: adaptCloverGoal(goalRow),
           tasks: ((tasksRes.data ?? []) as CloverTaskRow[]).map(adaptCloverTask),
           commitments: [],
           dependsOn: [],

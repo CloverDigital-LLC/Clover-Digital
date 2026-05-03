@@ -8,11 +8,10 @@
 import { useQuery } from '@tanstack/react-query'
 import {
   cloverOpsConfigured,
-  cloverOpsSessionReady,
-  cloverOpsSupabase,
   supabase,
   supabaseConfigured,
 } from '../lib/supabase'
+import { cloverOpsReadReady, selectCloverOps } from '../lib/cloverOpsBridge'
 import { useVentureFilter } from '../context/VentureFilterContext'
 import { CLOVER_PROJECT_FILTER } from '../lib/dataRouting'
 
@@ -38,13 +37,8 @@ export function useMoneyMeter() {
   return useQuery({
     queryKey: ['money-meter', viewRole],
     queryFn: async (): Promise<MoneyMeter> => {
-      const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
-      const client = cloverReady
-        ? cloverOpsSupabase
-        : viewRole === 'admin' && supabaseConfigured
-          ? supabase
-          : null
-      if (!client) {
+      const cloverReady = await cloverOpsReadReady()
+      if (!cloverReady && !(viewRole === 'admin' && supabaseConfigured)) {
         return {
           pilots_signed: 0,
           pilots_target: 8,
@@ -54,10 +48,17 @@ export function useMoneyMeter() {
           qualified_pipeline_cents: 0,
         }
       }
-      const { data, error } = await client
-        .from('cd_target_accounts')
-        .select('id, monthly_value_hypothesis_cents')
-        .eq('status', 'qualified')
+      const { data, error } = cloverReady
+        ? await selectCloverOps<{
+            id: string
+            monthly_value_hypothesis_cents: number | null
+          }>('cd_target_accounts', 'id, monthly_value_hypothesis_cents', {
+            filters: [{ type: 'eq', column: 'status', value: 'qualified' }],
+          })
+        : await supabase
+            .from('cd_target_accounts')
+            .select('id, monthly_value_hypothesis_cents')
+            .eq('status', 'qualified')
       if (error) throw error
       const rows = (data ?? []) as Array<{
         id: string
@@ -97,7 +98,7 @@ export function useShipStreak() {
       // Pull last 60 days of completions. 60 is generous; the longest
       // streak we care about visually.
       const since = new Date(Date.now() - 60 * 86_400_000).toISOString()
-      const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
+      const cloverReady = await cloverOpsReadReady()
       const [fleetRes, cloverRes] = await Promise.all([
         viewRole === 'admin' && supabaseConfigured
           ? supabase
@@ -109,13 +110,18 @@ export function useShipStreak() {
               .order('completed_at', { ascending: false })
           : Promise.resolve({ data: [], error: null }),
         cloverReady
-          ? cloverOpsSupabase
-              .from('cd_tasks')
-              .select('completed_at')
-              .is('archived_at', null)
-              .eq('status', 'completed')
-              .gte('completed_at', since)
-              .order('completed_at', { ascending: false })
+          ? selectCloverOps<{ completed_at: string | null }>(
+              'cd_tasks',
+              'completed_at',
+              {
+                filters: [
+                  { type: 'is', column: 'archived_at', value: null },
+                  { type: 'eq', column: 'status', value: 'completed' },
+                  { type: 'gte', column: 'completed_at', value: since },
+                ],
+                order: [{ column: 'completed_at', ascending: false }],
+              },
+            )
           : Promise.resolve({ data: [], error: null }),
       ])
       if (fleetRes.error) throw fleetRes.error

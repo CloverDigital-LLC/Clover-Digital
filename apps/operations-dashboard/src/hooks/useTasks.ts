@@ -1,11 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import {
   cloverOpsConfigured,
-  cloverOpsSessionReady,
-  cloverOpsSupabase,
   supabase,
   supabaseConfigured,
 } from '../lib/supabase'
+import { cloverOpsReadReady, selectCloverOps } from '../lib/cloverOpsBridge'
 import type { AgentTaskRow, Venture } from '../lib/types'
 import {
   useVentureFilter,
@@ -45,7 +44,7 @@ export function useActiveWork() {
   return useQuery({
     queryKey: ['active-work', viewRole, ventures?.join(',') ?? 'all'],
     queryFn: async () => {
-      const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
+      const cloverReady = await cloverOpsReadReady()
       const fleetVentures = fleetVenturesForScope(ventures)
       const fleetPromise = viewRole === 'admin' && supabaseConfigured
         ? (async () => {
@@ -67,13 +66,22 @@ export function useActiveWork() {
       const cloverPromise =
         cloverReady && wantsCloverOps(ventures)
           ? (async () => {
-              const { data, error } = await cloverOpsSupabase
-                .from('cd_tasks')
-                .select(CLOVER_TASK_COLUMNS)
-                .is('archived_at', null)
-                .not('status', 'in', '(completed,cancelled,failed)')
-                .order('created_at', { ascending: false })
-                .limit(15)
+              const { data, error } = await selectCloverOps<CloverTaskRow>(
+                'cd_tasks',
+                CLOVER_TASK_COLUMNS,
+                {
+                  filters: [
+                    { type: 'is', column: 'archived_at', value: null },
+                    {
+                      type: 'notIn',
+                      column: 'status',
+                      values: ['completed', 'cancelled', 'failed'],
+                    },
+                  ],
+                  order: [{ column: 'created_at', ascending: false }],
+                  limit: 15,
+                },
+              )
               if (error) {
                 warnCloverOps('active tasks', error)
                 return [] as AgentTaskRow[]
@@ -97,7 +105,7 @@ export function useRecentlyShipped(daysBack = 7) {
     queryKey: ['recently-shipped', daysBack, viewRole, ventures?.join(',') ?? 'all'],
     queryFn: async () => {
       const since = new Date(Date.now() - daysBack * 86_400_000).toISOString()
-      const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
+      const cloverReady = await cloverOpsReadReady()
       const fleetVentures = fleetVenturesForScope(ventures)
       const fleetPromise = viewRole === 'admin' && supabaseConfigured
         ? (async () => {
@@ -120,14 +128,19 @@ export function useRecentlyShipped(daysBack = 7) {
       const cloverPromise =
         cloverReady && wantsCloverOps(ventures)
           ? (async () => {
-              const { data, error } = await cloverOpsSupabase
-                .from('cd_tasks')
-                .select(CLOVER_TASK_COLUMNS)
-                .is('archived_at', null)
-                .eq('status', 'completed')
-                .gte('completed_at', since)
-                .order('completed_at', { ascending: false })
-                .limit(20)
+              const { data, error } = await selectCloverOps<CloverTaskRow>(
+                'cd_tasks',
+                CLOVER_TASK_COLUMNS,
+                {
+                  filters: [
+                    { type: 'is', column: 'archived_at', value: null },
+                    { type: 'eq', column: 'status', value: 'completed' },
+                    { type: 'gte', column: 'completed_at', value: since },
+                  ],
+                  order: [{ column: 'completed_at', ascending: false }],
+                  limit: 20,
+                },
+              )
               if (error) {
                 warnCloverOps('recently shipped tasks', error)
                 return [] as AgentTaskRow[]
@@ -175,7 +188,7 @@ export function useBlockedTasks() {
   return useQuery({
     queryKey: ['blocked-tasks', viewRole, ventures?.join(',') ?? 'all'],
     queryFn: async () => {
-      const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
+      const cloverReady = await cloverOpsReadReady()
       const fleetVentures = fleetVenturesForScope(ventures)
       const fleetPromise = viewRole === 'admin' && supabaseConfigured
         ? (async () => {
@@ -197,13 +210,18 @@ export function useBlockedTasks() {
       const cloverPromise =
         cloverReady && wantsCloverOps(ventures)
           ? (async () => {
-              const { data, error } = await cloverOpsSupabase
-                .from('cd_tasks')
-                .select(CLOVER_TASK_COLUMNS)
-                .is('archived_at', null)
-                .eq('status', 'blocked')
-                .order('created_at', { ascending: false })
-                .limit(20)
+              const { data, error } = await selectCloverOps<CloverTaskRow>(
+                'cd_tasks',
+                CLOVER_TASK_COLUMNS,
+                {
+                  filters: [
+                    { type: 'is', column: 'archived_at', value: null },
+                    { type: 'eq', column: 'status', value: 'blocked' },
+                  ],
+                  order: [{ column: 'created_at', ascending: false }],
+                  limit: 20,
+                },
+              )
               if (error) {
                 warnCloverOps('blocked tasks', error)
                 return [] as AgentTaskRow[]
@@ -234,7 +252,7 @@ export function useTasksInWindow(daysBack = 7) {
     queryFn: async () => {
       const since = new Date(Date.now() - daysBack * 86_400_000).toISOString()
       const scope = viewRole === 'team' ? TEAM_VENTURES : null
-      const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
+      const cloverReady = await cloverOpsReadReady()
       const fleetPromise = viewRole === 'admin' && supabaseConfigured
         ? (async () => {
             let q = supabase
@@ -253,12 +271,17 @@ export function useTasksInWindow(daysBack = 7) {
       const cloverPromise =
         cloverReady && wantsCloverOps(scope)
           ? (async () => {
-              const { data, error } = await cloverOpsSupabase
-                .from('cd_tasks')
-                .select(CLOVER_TASK_COLUMNS)
-                .is('archived_at', null)
-                .or(`created_at.gte.${since},completed_at.gte.${since}`)
-                .limit(500)
+              const { data, error } = await selectCloverOps<CloverTaskRow>(
+                'cd_tasks',
+                CLOVER_TASK_COLUMNS,
+                {
+                  filters: [
+                    { type: 'is', column: 'archived_at', value: null },
+                    { type: 'or', value: `created_at.gte.${since},completed_at.gte.${since}` },
+                  ],
+                  limit: 500,
+                },
+              )
               if (error) {
                 warnCloverOps('task window', error)
                 return [] as AgentTaskRow[]

@@ -1,5 +1,15 @@
 export type DashboardSurface = 'clover' | 'admin'
 
+const hostname =
+  typeof window === 'undefined' ? '' : window.location.hostname.toLowerCase()
+
+const hostSurface: DashboardSurface | null =
+  hostname === 'dashboard.cloverdigital.com'
+    ? 'clover'
+    : hostname === 'clover-operations-dashboard.vercel.app'
+      ? 'admin'
+      : null
+
 const requestedSurface = String(
   import.meta.env.VITE_DASHBOARD_SURFACE ?? '',
 ).toLowerCase()
@@ -9,7 +19,8 @@ const legacyAdminFlag =
   'true'
 
 export const dashboardSurface: DashboardSurface =
-  requestedSurface === 'admin' || legacyAdminFlag ? 'admin' : 'clover'
+  hostSurface ??
+  (requestedSurface === 'admin' || legacyAdminFlag ? 'admin' : 'clover')
 
 export const adminSurfaceEnabled = dashboardSurface === 'admin'
 

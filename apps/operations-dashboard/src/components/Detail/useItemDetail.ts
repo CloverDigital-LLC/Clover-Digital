@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import {
   cloverOpsConfigured,
-  cloverOpsSupabase,
   supabase,
   supabaseConfigured,
 } from '../../lib/supabase'
+import { selectCloverOps } from '../../lib/cloverOpsBridge'
 import { MEMORY_PROPOSAL_SELECT } from '../../hooks/useMemoryProposals'
 import type { DetailKind } from './DetailContext'
 import type {
@@ -57,15 +57,19 @@ export function useItemDetail(kind: DetailKind | null, id: string | null) {
 
       if (kind === 'task') {
         if (isCloverOpsId(id)) {
-          const { data, error } = await cloverOpsSupabase
-            .from('cd_tasks')
-            .select(CLOVER_TASK_COLUMNS)
-            .eq('id', fromCloverOpsId(id))
-            .maybeSingle()
+          const { data, error } = await selectCloverOps<CloverTaskRow>(
+            'cd_tasks',
+            CLOVER_TASK_COLUMNS,
+            {
+              filters: [{ type: 'eq', column: 'id', value: fromCloverOpsId(id) }],
+              limit: 1,
+            },
+          )
           if (error) throw error
+          const row = data?.[0] ?? null
           return {
             kind,
-            row: data ? adaptCloverTask(data as CloverTaskRow) : null,
+            row: row ? adaptCloverTask(row) : null,
           }
         }
         if (viewRole !== 'admin') return { kind, row: null }
@@ -80,15 +84,19 @@ export function useItemDetail(kind: DetailKind | null, id: string | null) {
 
       if (kind === 'knowledge') {
         if (isCloverOpsId(id)) {
-          const { data, error } = await cloverOpsSupabase
-            .from('cd_knowledge')
-            .select(CLOVER_KNOWLEDGE_COLUMNS)
-            .eq('id', fromCloverOpsId(id))
-            .maybeSingle()
+          const { data, error } = await selectCloverOps<CloverKnowledgeRow>(
+            'cd_knowledge',
+            CLOVER_KNOWLEDGE_COLUMNS,
+            {
+              filters: [{ type: 'eq', column: 'id', value: fromCloverOpsId(id) }],
+              limit: 1,
+            },
+          )
           if (error) throw error
+          const row = data?.[0] ?? null
           return {
             kind,
-            row: data ? adaptCloverKnowledge(data as CloverKnowledgeRow) : null,
+            row: row ? adaptCloverKnowledge(row) : null,
           }
         }
         if (viewRole !== 'admin') return { kind, row: null }
@@ -114,13 +122,16 @@ export function useItemDetail(kind: DetailKind | null, id: string | null) {
 
       if (kind === 'account') {
         if (isCloverOpsId(id)) {
-          const { data, error } = await cloverOpsSupabase
-            .from('cd_target_accounts')
-            .select('*')
-            .eq('id', fromCloverOpsId(id))
-            .maybeSingle()
+          const { data, error } = await selectCloverOps<CdTargetAccountRow>(
+            'cd_target_accounts',
+            '*',
+            {
+              filters: [{ type: 'eq', column: 'id', value: fromCloverOpsId(id) }],
+              limit: 1,
+            },
+          )
           if (error) throw error
-          return { kind, row: data as CdTargetAccountRow | null }
+          return { kind, row: data?.[0] ?? null }
         }
         if (viewRole !== 'admin') return { kind, row: null }
         const { data, error } = await supabase
@@ -164,26 +175,27 @@ export function useItemDetail(kind: DetailKind | null, id: string | null) {
         if (isCloverOpsId(id)) {
           const rawId = fromCloverOpsId(id)
           const [goalRes, tasksRes] = await Promise.all([
-            cloverOpsSupabase
-              .from('cd_goals')
-              .select(CLOVER_GOAL_COLUMNS)
-              .eq('id', rawId)
-              .maybeSingle(),
-            cloverOpsSupabase
-              .from('cd_tasks')
-              .select(CLOVER_TASK_COLUMNS)
-              .is('archived_at', null)
-              .eq('goal_id', rawId)
-              .order('created_at', { ascending: false }),
+            selectCloverOps<CloverGoalRow>('cd_goals', CLOVER_GOAL_COLUMNS, {
+              filters: [{ type: 'eq', column: 'id', value: rawId }],
+              limit: 1,
+            }),
+            selectCloverOps<CloverTaskRow>('cd_tasks', CLOVER_TASK_COLUMNS, {
+              filters: [
+                { type: 'is', column: 'archived_at', value: null },
+                { type: 'eq', column: 'goal_id', value: rawId },
+              ],
+              order: [{ column: 'created_at', ascending: false }],
+            }),
           ])
           if (goalRes.error) throw goalRes.error
           if (tasksRes.error) throw tasksRes.error
-          if (!goalRes.data) return { kind, row: null }
+          const goalRow = goalRes.data?.[0] ?? null
+          if (!goalRow) return { kind, row: null }
 
           return {
             kind,
             row: {
-              goal: adaptCloverGoal(goalRes.data as CloverGoalRow),
+              goal: adaptCloverGoal(goalRow),
               tasks: ((tasksRes.data ?? []) as CloverTaskRow[]).map(adaptCloverTask),
               commitments: [],
               dependsOn: [] as GoalRow[],

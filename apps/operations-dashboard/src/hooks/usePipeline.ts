@@ -1,11 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import {
   cloverOpsConfigured,
-  cloverOpsSessionReady,
-  cloverOpsSupabase,
   supabase,
   supabaseConfigured,
 } from '../lib/supabase'
+import { cloverOpsReadReady, selectCloverOps } from '../lib/cloverOpsBridge'
 import { adaptCdAccount } from '../lib/adapters'
 import type { CdTargetAccountRow } from '../lib/types'
 import { toCloverOpsId } from '../lib/cloverOps'
@@ -19,15 +18,20 @@ export function usePipeline(limit = 10) {
     queryKey: ['pipeline', limit, viewRole],
     queryFn: async () => {
       async function fetchRows(useCloverOps: boolean) {
-        const client = useCloverOps ? cloverOpsSupabase : supabase
-        const { data, error } = await client
-          .from('cd_target_accounts')
-          .select(
-            'id, business_name, vertical, location_city, location_state, fit_score, status, updated_at, priority',
-          )
-          .neq('status', 'disqualified')
-          .order('fit_score', { ascending: false, nullsFirst: false })
-          .limit(limit)
+        const select =
+          'id, business_name, vertical, location_city, location_state, fit_score, status, updated_at, priority'
+        const { data, error } = useCloverOps
+          ? await selectCloverOps<CdTargetAccountRow>('cd_target_accounts', select, {
+              filters: [{ type: 'neq', column: 'status', value: 'disqualified' }],
+              order: [{ column: 'fit_score', ascending: false, nullsFirst: false }],
+              limit,
+            })
+          : await supabase
+              .from('cd_target_accounts')
+              .select(select)
+              .neq('status', 'disqualified')
+              .order('fit_score', { ascending: false, nullsFirst: false })
+              .limit(limit)
         if (error) throw error
         return (data as unknown as CdTargetAccountRow[]).map((row) => {
           const adapted = adaptCdAccount(row)
@@ -35,7 +39,7 @@ export function usePipeline(limit = 10) {
         })
       }
 
-      if (cloverOpsConfigured && (await cloverOpsSessionReady())) {
+      if (await cloverOpsReadReady()) {
         try {
           return await fetchRows(true)
         } catch (error) {
@@ -57,24 +61,60 @@ export function usePipelineKpis() {
       // active prospects = anything not disqualified
       const sevenDaysAgo = new Date(Date.now() - 7 * 86_400_000).toISOString()
       async function fetchKpis(useCloverOps: boolean) {
-        const client = useCloverOps ? cloverOpsSupabase : supabase
+        if (useCloverOps) {
+          return Promise.all([
+            selectCloverOps('cd_target_accounts', 'id', {
+              count: 'exact',
+              head: true,
+              filters: [{ type: 'neq', column: 'status', value: 'disqualified' }],
+            }),
+            selectCloverOps('cd_target_accounts', 'id', {
+              count: 'exact',
+              head: true,
+              filters: [
+                { type: 'gte', column: 'updated_at', value: sevenDaysAgo },
+                { type: 'neq', column: 'status', value: 'new' },
+                { type: 'neq', column: 'status', value: 'disqualified' },
+              ],
+            }),
+            selectCloverOps('cd_target_accounts', 'id', {
+              count: 'exact',
+              head: true,
+              filters: [
+                { type: 'eq', column: 'status', value: 'qualified' },
+                { type: 'gte', column: 'updated_at', value: sevenDaysAgo },
+              ],
+            }),
+            selectCloverOps<{ fit_score: number | null }>(
+              'cd_target_accounts',
+              'fit_score',
+              {
+                filters: [
+                  { type: 'neq', column: 'status', value: 'disqualified' },
+                  { type: 'not', column: 'fit_score', operator: 'is', value: null },
+                ],
+                limit: 2000,
+              },
+            ),
+          ])
+        }
         return Promise.all([
-          client
+          supabase
             .from('cd_target_accounts')
             .select('id', { count: 'exact', head: true })
             .neq('status', 'disqualified'),
-          client
+          supabase
             .from('cd_target_accounts')
             .select('id', { count: 'exact', head: true })
             .gte('updated_at', sevenDaysAgo)
             .neq('status', 'new')
             .neq('status', 'disqualified'),
-          client
+          supabase
             .from('cd_target_accounts')
             .select('id', { count: 'exact', head: true })
             .eq('status', 'qualified')
             .gte('updated_at', sevenDaysAgo),
-          client
+          supabase
             .from('cd_target_accounts')
             .select('fit_score')
             .neq('status', 'disqualified')
@@ -87,7 +127,7 @@ export function usePipelineKpis() {
       let repliedRes
       let qualifiedRes
       let avgRes
-      if (cloverOpsConfigured && (await cloverOpsSessionReady())) {
+      if (await cloverOpsReadReady()) {
         try {
           ;[activeRes, repliedRes, qualifiedRes, avgRes] = await fetchKpis(true)
         } catch (error) {

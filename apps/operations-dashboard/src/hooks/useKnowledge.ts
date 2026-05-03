@@ -1,11 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import {
   cloverOpsConfigured,
-  cloverOpsSessionReady,
-  cloverOpsSupabase,
   supabase,
   supabaseConfigured,
 } from '../lib/supabase'
+import { cloverOpsReadReady, selectCloverOps } from '../lib/cloverOpsBridge'
 import { adaptKnowledge } from '../lib/adapters'
 import type { KnowledgeRow } from '../lib/types'
 import { useVentureFilter, useVentureScope } from '../context/VentureFilterContext'
@@ -29,7 +28,7 @@ export function useKnowledge(limit = 6) {
   return useQuery({
     queryKey: ['knowledge', limit, viewRole, projects?.join(',') ?? 'all'],
     queryFn: async () => {
-      const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
+      const cloverReady = await cloverOpsReadReady()
       const fleetProjects = withoutCloverProjects(projects)
       const fleetPromise = viewRole === 'admin' && supabaseConfigured
         ? (async () => {
@@ -51,18 +50,27 @@ export function useKnowledge(limit = 6) {
       const cloverPromise =
         cloverReady && wantsCloverOps(projects)
           ? (async () => {
-              const { data, error } = await cloverOpsSupabase
-                .from('cd_knowledge')
-                .select(CLOVER_KNOWLEDGE_COLUMNS)
-                .in('category', [
-                  'decision',
-                  'research',
-                  'insight',
-                  'product_decision',
-                  'implementation_note',
-                ])
-                .order('created_at', { ascending: false })
-                .limit(limit)
+              const { data, error } = await selectCloverOps<CloverKnowledgeRow>(
+                'cd_knowledge',
+                CLOVER_KNOWLEDGE_COLUMNS,
+                {
+                  filters: [
+                    {
+                      type: 'in',
+                      column: 'category',
+                      values: [
+                        'decision',
+                        'research',
+                        'insight',
+                        'product_decision',
+                        'implementation_note',
+                      ],
+                    },
+                  ],
+                  order: [{ column: 'created_at', ascending: false }],
+                  limit,
+                },
+              )
               if (error) {
                 warnCloverOps('knowledge', error)
                 return [] as KnowledgeRow[]
