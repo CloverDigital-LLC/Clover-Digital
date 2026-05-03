@@ -2,15 +2,17 @@ import { useQuery } from '@tanstack/react-query'
 import { supabase, supabaseConfigured } from '../lib/supabase'
 import { adaptCommitment } from '../lib/adapters'
 import type { MasonCommitmentRow } from '../lib/types'
-import { useVentureScope } from '../context/VentureFilterContext'
+import { useVentureFilter, useVentureScope } from '../context/VentureFilterContext'
 
 export function useCommitments() {
+  const { viewRole } = useVentureFilter()
   const { ventures } = useVentureScope()
   return useQuery({
     // Re-key on the active venture scope so team view ↔ admin view
     // doesn't serve a stale cross-venture cache.
-    queryKey: ['mason-commitments', ventures?.join(',') ?? 'all'],
+    queryKey: ['mason-commitments', viewRole, ventures?.join(',') ?? 'all'],
     queryFn: async () => {
+      if (viewRole !== 'admin') return []
       let q = supabase
         .from('mason_commitments')
         .select(
@@ -28,6 +30,6 @@ export function useCommitments() {
       return (data as unknown as MasonCommitmentRow[]).map((r) => adaptCommitment(r))
     },
     refetchInterval: 60_000,
-    enabled: supabaseConfigured,
+    enabled: supabaseConfigured && viewRole === 'admin',
   })
 }

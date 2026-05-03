@@ -12,6 +12,7 @@
  */
 import { useQuery } from '@tanstack/react-query'
 import { supabase, supabaseConfigured } from '../lib/supabase'
+import { useVentureFilter } from '../context/VentureFilterContext'
 
 const REFRESH_MS = 60_000
 const ARCHIVIST = 'archivist'
@@ -149,8 +150,9 @@ export function applyPolicyFor(
  * session within 30 min).
  */
 export function useArchivistRuns(limit = 7) {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['archivist-runs', limit],
+    queryKey: ['archivist-runs', viewRole, limit],
     queryFn: async (): Promise<ArchivistRun[]> => {
       const since = new Date(Date.now() - 30 * 86_400_000).toISOString()
       const [sessionsRes, proposalsRes] = await Promise.all([
@@ -229,7 +231,7 @@ export function useArchivistRuns(limit = 7) {
       })
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured,
+    enabled: supabaseConfigured && viewRole === 'admin',
   })
 }
 
@@ -287,8 +289,9 @@ function deriveTrust(runs: ArchivistRun[]): TrustSignal {
  * Sorted newest first.
  */
 export function useArchivistChangeFeed24h() {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['archivist-change-feed-24h'],
+    queryKey: ['archivist-change-feed-24h', viewRole],
     queryFn: async (): Promise<ChangeFeedItem[]> => {
       const since = new Date(Date.now() - 24 * 3_600_000).toISOString()
 
@@ -386,7 +389,7 @@ export function useArchivistChangeFeed24h() {
       return items
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured,
+    enabled: supabaseConfigured && viewRole === 'admin',
   })
 }
 
@@ -395,8 +398,9 @@ export function useArchivistChangeFeed24h() {
  * counts and a policy badge derived from the spec.
  */
 export function useProposalsByType() {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['proposals-by-type'],
+    queryKey: ['proposals-by-type', viewRole],
     queryFn: async (): Promise<ProposalGroupRow[]> => {
       const { data, error } = await supabase
         .from('memory_proposals')
@@ -434,7 +438,7 @@ export function useProposalsByType() {
       )
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured,
+    enabled: supabaseConfigured && viewRole === 'admin',
   })
 }
 

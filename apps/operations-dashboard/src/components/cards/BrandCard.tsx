@@ -10,11 +10,11 @@ import {
   type BrandRankPoint,
 } from '../../hooks/useBrandTraction'
 import { fmtDate, relTime } from '../../lib/adapters'
-import { useAuth } from '../../auth/AuthProvider'
+import { useVentureFilter } from '../../context/VentureFilterContext'
 
 export function BrandCard() {
-  const { role } = useAuth()
-  const isAdmin = role === 'admin'
+  const { viewRole } = useVentureFilter()
+  const isAdmin = viewRole === 'admin'
 
   const { data: rankPoints = [] } = useBrandRankHistory(PRIMARY_RANK_TERM)
   const { data: gh } = useGithubOrgPulse()

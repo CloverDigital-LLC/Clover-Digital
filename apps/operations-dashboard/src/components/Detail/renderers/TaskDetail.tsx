@@ -4,10 +4,11 @@ import { displayTaskStatus, displayVenture, fmtDate, fmtTime, relTime } from '..
 import { CollapsibleText, Field, FieldGroup, Timeline, type TimelineEvent } from './shared'
 import { ArtifactGallery } from './ArtifactGallery'
 import { DepartmentPicker } from '../DepartmentPicker'
-import { useAuth } from '../../../auth/AuthProvider'
+import { useVentureFilter } from '../../../context/VentureFilterContext'
 
 export function TaskDetail({ row }: { row: AgentTaskRow }) {
-  const { role } = useAuth()
+  const { viewRole } = useVentureFilter()
+  const publicTaskId = row.project?.startsWith('CD-T-') ? row.project : row.id
   const events: TimelineEvent[] = []
   events.push({ at: row.created_at, label: 'Created', tone: 'ink' })
   if (row.started_at)
@@ -73,7 +74,7 @@ export function TaskDetail({ row }: { row: AgentTaskRow }) {
         <Field
           label="Department"
           value={
-            role === 'admin' ? (
+            viewRole === 'admin' ? (
               <DepartmentPicker taskId={row.id} current={row.department} />
             ) : (
               row.department ?? <span className="text-ink-400">— inferred —</span>
@@ -97,7 +98,7 @@ export function TaskDetail({ row }: { row: AgentTaskRow }) {
             value={<code className="text-[11px]">{row.source_commitment_id}</code>}
           />
         )}
-        <Field label="ID" value={<code className="text-[11px]">{row.id}</code>} />
+        <Field label="ID" value={<code className="text-[11px]">{publicTaskId}</code>} />
       </FieldGroup>
 
       {row.error && (

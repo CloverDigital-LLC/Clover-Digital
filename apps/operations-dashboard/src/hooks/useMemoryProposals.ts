@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase, supabaseConfigured } from '../lib/supabase'
 import type { MemoryProposalRow } from '../lib/types'
+import { useVentureFilter } from '../context/VentureFilterContext'
 
 const REFRESH_MS = 30_000
 
@@ -8,8 +9,9 @@ export const MEMORY_PROPOSAL_SELECT =
   'id, proposed_by, proposal_type, target_knowledge_id, related_knowledge_ids, payload, rationale, status, reviewed_at, reviewed_by, auto_approvable, created_at'
 
 export function usePendingProposals(limit = 20) {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['pending-memory-proposals', limit],
+    queryKey: ['pending-memory-proposals', viewRole, limit],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('memory_proposals')
@@ -21,7 +23,7 @@ export function usePendingProposals(limit = 20) {
       return (data ?? []) as MemoryProposalRow[]
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured,
+    enabled: supabaseConfigured && viewRole === 'admin',
   })
 }
 
@@ -37,8 +39,9 @@ export interface ArchivistCadence {
  * when he's running fine — sessions are the truth).
  */
 export function useArchivistCadence() {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['archivist-cadence'],
+    queryKey: ['archivist-cadence', viewRole],
     queryFn: async (): Promise<ArchivistCadence> => {
       const since = new Date(Date.now() - 7 * 86_400_000).toISOString()
       const { data, error } = await supabase
@@ -72,6 +75,6 @@ export function useArchivistCadence() {
       }
     },
     refetchInterval: 5 * 60_000,
-    enabled: supabaseConfigured,
+    enabled: supabaseConfigured && viewRole === 'admin',
   })
 }

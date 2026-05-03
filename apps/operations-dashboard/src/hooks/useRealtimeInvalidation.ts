@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { supabase, supabaseConfigured } from '../lib/supabase'
 import { useAuth } from '../auth/AuthProvider'
+import { useVentureFilter } from '../context/VentureFilterContext'
 
 /**
  * Subscribe to Postgres row changes on the tables the dashboard reads,
@@ -44,9 +45,11 @@ const TABLE_TO_KEYS: Record<string, string[][]> = {
 export function useRealtimeInvalidation() {
   const queryClient = useQueryClient()
   const { session } = useAuth()
+  const { viewRole } = useVentureFilter()
   const accessToken = session?.access_token ?? null
 
   useEffect(() => {
+    if (viewRole !== 'admin') return
     if (!supabaseConfigured) return
     // Wait for a real auth token. Without it, RLS-protected realtime
     // subscriptions return CHANNEL_ERROR. Each token rotation re-runs
@@ -104,5 +107,5 @@ export function useRealtimeInvalidation() {
       if (retryTimer) clearTimeout(retryTimer)
       supabase.removeChannel(channel)
     }
-  }, [queryClient, accessToken])
+  }, [queryClient, accessToken, viewRole])
 }

@@ -2,10 +2,12 @@ import { useQuery } from '@tanstack/react-query'
 import { supabase, supabaseConfigured } from '../lib/supabase'
 import { adaptHeartbeats } from '../lib/adapters'
 import type { AgentHeartbeatRow } from '../lib/types'
+import { useVentureFilter } from '../context/VentureFilterContext'
 
 export function useHeartbeats() {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['heartbeats'],
+    queryKey: ['heartbeats', viewRole],
     queryFn: async () => {
       // Pull recent heartbeats; adapter takes the latest per agent.
       // Window is wide enough to surface a "stale" agent — that's the point.
@@ -20,6 +22,6 @@ export function useHeartbeats() {
       return adaptHeartbeats((data ?? []) as AgentHeartbeatRow[])
     },
     refetchInterval: 30_000,
-    enabled: supabaseConfigured,
+    enabled: supabaseConfigured && viewRole === 'admin',
   })
 }

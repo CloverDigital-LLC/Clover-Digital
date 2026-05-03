@@ -26,6 +26,7 @@ import {
   type CloverKnowledgeRow,
   type CloverTaskRow,
 } from '../../lib/cloverOps'
+import { useVentureFilter } from '../../context/VentureFilterContext'
 
 const CLOVER_TASK_COLUMNS =
   'id, ticket_key, goal_id, parent_task_id, title, description, acceptance_criteria, assigned_to, requested_by, department, status, priority, due_date, output, error, source_ref, started_at, completed_at, stale_notified_at, created_at, updated_at'
@@ -44,9 +45,12 @@ const CLOVER_KNOWLEDGE_COLUMNS =
  * - `proposal` → one memory_proposals row
  */
 export function useItemDetail(kind: DetailKind | null, id: string | null) {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['item-detail', kind, id],
-    enabled: (supabaseConfigured || cloverOpsConfigured) && Boolean(kind && id),
+    queryKey: ['item-detail', viewRole, kind, id],
+    enabled:
+      ((viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured) &&
+      Boolean(kind && id),
     refetchInterval: 30_000,
     queryFn: async () => {
       if (!kind || !id) return null
@@ -64,6 +68,7 @@ export function useItemDetail(kind: DetailKind | null, id: string | null) {
             row: data ? adaptCloverTask(data as CloverTaskRow) : null,
           }
         }
+        if (viewRole !== 'admin') return { kind, row: null }
         const { data, error } = await supabase
           .from('agent_tasks')
           .select('*')
@@ -86,6 +91,7 @@ export function useItemDetail(kind: DetailKind | null, id: string | null) {
             row: data ? adaptCloverKnowledge(data as CloverKnowledgeRow) : null,
           }
         }
+        if (viewRole !== 'admin') return { kind, row: null }
         const { data, error } = await supabase
           .from('knowledge')
           .select('*')
@@ -96,6 +102,7 @@ export function useItemDetail(kind: DetailKind | null, id: string | null) {
       }
 
       if (kind === 'commitment') {
+        if (viewRole !== 'admin') return { kind, row: null }
         const { data, error } = await supabase
           .from('mason_commitments')
           .select('*')
@@ -115,6 +122,7 @@ export function useItemDetail(kind: DetailKind | null, id: string | null) {
           if (error) throw error
           return { kind, row: data as CdTargetAccountRow | null }
         }
+        if (viewRole !== 'admin') return { kind, row: null }
         const { data, error } = await supabase
           .from('cd_target_accounts')
           .select('*')
@@ -125,6 +133,7 @@ export function useItemDetail(kind: DetailKind | null, id: string | null) {
       }
 
       if (kind === 'agent') {
+        if (viewRole !== 'admin') return { kind, row: null }
         const sinceIso = new Date(Date.now() - 24 * 3_600_000).toISOString()
         const { data, error } = await supabase
           .from('agent_heartbeats')
@@ -141,6 +150,7 @@ export function useItemDetail(kind: DetailKind | null, id: string | null) {
       }
 
       if (kind === 'proposal') {
+        if (viewRole !== 'admin') return { kind, row: null }
         const { data, error } = await supabase
           .from('memory_proposals')
           .select(MEMORY_PROPOSAL_SELECT)
@@ -179,6 +189,7 @@ export function useItemDetail(kind: DetailKind | null, id: string | null) {
             },
           }
         }
+        if (viewRole !== 'admin') return { kind, row: null }
         const [goalRes, tasksRes, commitsRes] = await Promise.all([
           supabase.from('goals').select('*').eq('id', id).maybeSingle(),
           supabase

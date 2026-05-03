@@ -9,12 +9,14 @@ import {
 import { adaptCdAccount } from '../lib/adapters'
 import type { CdTargetAccountRow } from '../lib/types'
 import { toCloverOpsId } from '../lib/cloverOps'
+import { useVentureFilter } from '../context/VentureFilterContext'
 
 const REFRESH_MS = 60_000
 
 export function usePipeline(limit = 10) {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['pipeline', limit],
+    queryKey: ['pipeline', limit, viewRole],
     queryFn: async () => {
       async function fetchRows(useCloverOps: boolean) {
         const client = useCloverOps ? cloverOpsSupabase : supabase
@@ -37,19 +39,20 @@ export function usePipeline(limit = 10) {
         try {
           return await fetchRows(true)
         } catch (error) {
-          console.warn('[clover-ops] pipeline unavailable, falling back to prairie-fleet:', error)
+          console.warn('[clover-ops] pipeline unavailable:', error)
         }
       }
-      return fetchRows(false)
+      return viewRole === 'admin' && supabaseConfigured ? fetchRows(false) : []
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured || cloverOpsConfigured,
+    enabled: (viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured,
   })
 }
 
 export function usePipelineKpis() {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['pipeline-kpis'],
+    queryKey: ['pipeline-kpis', viewRole],
     queryFn: async () => {
       // active prospects = anything not disqualified
       const sevenDaysAgo = new Date(Date.now() - 7 * 86_400_000).toISOString()
@@ -88,11 +91,23 @@ export function usePipelineKpis() {
         try {
           ;[activeRes, repliedRes, qualifiedRes, avgRes] = await fetchKpis(true)
         } catch (error) {
-          console.warn('[clover-ops] pipeline KPIs unavailable, falling back to prairie-fleet:', error)
+          console.warn('[clover-ops] pipeline KPIs unavailable:', error)
         }
       }
-      if (!activeRes || !repliedRes || !qualifiedRes || !avgRes) {
+      if (
+        (!activeRes || !repliedRes || !qualifiedRes || !avgRes) &&
+        viewRole === 'admin' &&
+        supabaseConfigured
+      ) {
         ;[activeRes, repliedRes, qualifiedRes, avgRes] = await fetchKpis(false)
+      }
+      if (!activeRes || !repliedRes || !qualifiedRes || !avgRes) {
+        return {
+          active_prospects: 0,
+          avg_score: 0,
+          replies_this_week: 0,
+          meetings_booked: 0,
+        }
       }
 
       const fitScores = (avgRes.data ?? []).map((r) => r.fit_score as number)
@@ -112,6 +127,6 @@ export function usePipelineKpis() {
       }
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured || cloverOpsConfigured,
+    enabled: (viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured,
   })
 }

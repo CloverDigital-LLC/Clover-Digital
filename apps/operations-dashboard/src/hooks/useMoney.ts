@@ -13,6 +13,7 @@ import {
   supabase,
   supabaseConfigured,
 } from '../lib/supabase'
+import { useVentureFilter } from '../context/VentureFilterContext'
 
 const REFRESH_MS = 60_000
 
@@ -32,13 +33,26 @@ export interface MoneyMeter {
 }
 
 export function useMoneyMeter() {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['money-meter'],
+    queryKey: ['money-meter', viewRole],
     queryFn: async (): Promise<MoneyMeter> => {
-      const client =
-        cloverOpsConfigured && (await cloverOpsSessionReady())
-          ? cloverOpsSupabase
-          : supabase
+      const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
+      const client = cloverReady
+        ? cloverOpsSupabase
+        : viewRole === 'admin' && supabaseConfigured
+          ? supabase
+          : null
+      if (!client) {
+        return {
+          pilots_signed: 0,
+          pilots_target: 8,
+          mrr_cents: 0,
+          mrr_target_cents: 10_000_00,
+          qualified_count: 0,
+          qualified_pipeline_cents: 0,
+        }
+      }
       const { data, error } = await client
         .from('cd_target_accounts')
         .select('id, monthly_value_hypothesis_cents')
@@ -62,7 +76,7 @@ export function useMoneyMeter() {
       }
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured || cloverOpsConfigured,
+    enabled: (viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured,
   })
 }
 
@@ -75,20 +89,23 @@ export interface ShipStreak {
 }
 
 export function useShipStreak() {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['ship-streak'],
+    queryKey: ['ship-streak', viewRole],
     queryFn: async (): Promise<ShipStreak> => {
       // Pull last 60 days of completions. 60 is generous; the longest
       // streak we care about visually.
       const since = new Date(Date.now() - 60 * 86_400_000).toISOString()
       const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
       const [fleetRes, cloverRes] = await Promise.all([
-        supabase
-          .from('agent_tasks')
-          .select('completed_at')
-          .eq('status', 'completed')
-          .gte('completed_at', since)
-          .order('completed_at', { ascending: false }),
+        viewRole === 'admin' && supabaseConfigured
+          ? supabase
+              .from('agent_tasks')
+              .select('completed_at')
+              .eq('status', 'completed')
+              .gte('completed_at', since)
+              .order('completed_at', { ascending: false })
+          : Promise.resolve({ data: [], error: null }),
         cloverReady
           ? cloverOpsSupabase
               .from('cd_tasks')
@@ -148,7 +165,7 @@ export function useShipStreak() {
       }
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured || cloverOpsConfigured,
+    enabled: (viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured,
   })
 }
 

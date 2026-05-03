@@ -29,6 +29,7 @@ import {
   type CloverKnowledgeRow,
   type CloverTaskRow,
 } from '../lib/cloverOps'
+import { useVentureFilter } from '../context/VentureFilterContext'
 
 // ─── Project resources (project_registry) ────────────────────────────
 
@@ -47,8 +48,9 @@ export interface ProjectResource {
 }
 
 export function useProjectResources(venture: string) {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['project-resources', venture],
+    queryKey: ['project-resources', viewRole, venture],
     queryFn: async (): Promise<ProjectResource[]> => {
       const { data, error } = await supabase
         .from('project_registry')
@@ -62,7 +64,7 @@ export function useProjectResources(venture: string) {
       return (data ?? []) as ProjectResource[]
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured && Boolean(venture),
+    enabled: supabaseConfigured && viewRole === 'admin' && Boolean(venture),
   })
 }
 
@@ -89,12 +91,13 @@ export interface ProjectTaskBuckets {
 }
 
 export function useProjectTasks(venture: string) {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['project-tasks', venture],
+    queryKey: ['project-tasks', viewRole, venture],
     queryFn: async (): Promise<ProjectTaskBuckets> => {
       const sevenDaysAgo = new Date(Date.now() - 7 * 86_400_000).toISOString()
       const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
-      const fleetPromise = supabaseConfigured
+      const fleetPromise = viewRole === 'admin' && supabaseConfigured
         ? (async () => {
             const [openRes, doneRes] = await Promise.all([
               supabase
@@ -172,16 +175,19 @@ export function useProjectTasks(venture: string) {
       }
     },
     refetchInterval: REFRESH_MS,
-    enabled: (supabaseConfigured || cloverOpsConfigured) && Boolean(venture),
+    enabled:
+      ((viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured) &&
+      Boolean(venture),
   })
 }
 
 export function useProjectGoals(venture: string) {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['project-goals', venture],
+    queryKey: ['project-goals', viewRole, venture],
     queryFn: async (): Promise<GoalRow[]> => {
       const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
-      const fleetPromise = supabaseConfigured
+      const fleetPromise = viewRole === 'admin' && supabaseConfigured
         ? (async () => {
             const { data, error } = await supabase
               .from('goals')
@@ -214,16 +220,19 @@ export function useProjectGoals(venture: string) {
       return sortGoalsForDashboard([...fleetRows, ...cloverRows])
     },
     refetchInterval: REFRESH_MS,
-    enabled: (supabaseConfigured || cloverOpsConfigured) && Boolean(venture),
+    enabled:
+      ((viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured) &&
+      Boolean(venture),
   })
 }
 
 export function useProjectKnowledge(venture: string, limit = 12) {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['project-knowledge', venture, limit],
+    queryKey: ['project-knowledge', viewRole, venture, limit],
     queryFn: async (): Promise<KnowledgeRow[]> => {
       const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
-      const fleetPromise = supabaseConfigured
+      const fleetPromise = viewRole === 'admin' && supabaseConfigured
         ? (async () => {
             const { data, error } = await supabase
               .from('knowledge')
@@ -258,7 +267,9 @@ export function useProjectKnowledge(venture: string, limit = 12) {
         .slice(0, limit)
     },
     refetchInterval: REFRESH_MS,
-    enabled: (supabaseConfigured || cloverOpsConfigured) && Boolean(venture),
+    enabled:
+      ((viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured) &&
+      Boolean(venture),
   })
 }
 
@@ -268,27 +279,34 @@ export function useProjectKnowledge(venture: string, limit = 12) {
  * source) over the last 30 days.
  */
 export function useProjectAgents(venture: string) {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['project-agents', venture],
+    queryKey: ['project-agents', viewRole, venture],
     queryFn: async (): Promise<Array<{ agent: string; touch_count: number }>> => {
       const since = new Date(Date.now() - 30 * 86_400_000).toISOString()
       const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
       const [tasksRes, sessionsRes, knowledgeRes, cloverTasksRes, cloverKnowledgeRes] = await Promise.all([
-        supabase
-          .from('agent_tasks')
-          .select('agent, assigned_to')
-          .eq('venture', venture)
-          .gte('created_at', since),
-        supabase
-          .from('agent_sessions')
-          .select('agent')
-          .eq('venture', venture)
-          .gte('created_at', since),
-        supabase
-          .from('knowledge')
-          .select('source_agent')
-          .eq('project', venture)
-          .gte('created_at', since),
+        viewRole === 'admin' && supabaseConfigured
+          ? supabase
+              .from('agent_tasks')
+              .select('agent, assigned_to')
+              .eq('venture', venture)
+              .gte('created_at', since)
+          : Promise.resolve({ data: [], error: null }),
+        viewRole === 'admin' && supabaseConfigured
+          ? supabase
+              .from('agent_sessions')
+              .select('agent')
+              .eq('venture', venture)
+              .gte('created_at', since)
+          : Promise.resolve({ data: [], error: null }),
+        viewRole === 'admin' && supabaseConfigured
+          ? supabase
+              .from('knowledge')
+              .select('source_agent')
+              .eq('project', venture)
+              .gte('created_at', since)
+          : Promise.resolve({ data: [], error: null }),
         cloverReady && wantsCloverOps([venture])
           ? cloverOpsSupabase
               .from('cd_tasks')
@@ -328,6 +346,8 @@ export function useProjectAgents(venture: string) {
         .sort((a, b) => b.touch_count - a.touch_count)
     },
     refetchInterval: REFRESH_MS,
-    enabled: (supabaseConfigured || cloverOpsConfigured) && Boolean(venture),
+    enabled:
+      ((viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured) &&
+      Boolean(venture),
   })
 }

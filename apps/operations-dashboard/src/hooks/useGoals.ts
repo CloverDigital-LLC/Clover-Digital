@@ -6,7 +6,7 @@ import {
   supabase,
   supabaseConfigured,
 } from '../lib/supabase'
-import { useVentureScope } from '../context/VentureFilterContext'
+import { useVentureFilter, useVentureScope } from '../context/VentureFilterContext'
 import type { AgentTaskRow, GoalRow, MasonCommitmentRow } from '../lib/types'
 import {
   adaptCloverGoal,
@@ -36,12 +36,13 @@ function warnCloverOps(label: string, error: { message?: string }) {
  * default — pass `includeClosed: true` to surface them too.
  */
 export function useGoals({ includeClosed = false } = {}) {
+  const { viewRole } = useVentureFilter()
   const { ventures } = useVentureScope()
   return useQuery({
-    queryKey: ['goals', ventures?.join(',') ?? 'all', includeClosed],
+    queryKey: ['goals', viewRole, ventures?.join(',') ?? 'all', includeClosed],
     queryFn: async () => {
       const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
-      const fleetPromise = supabaseConfigured
+      const fleetPromise = viewRole === 'admin' && supabaseConfigured
         ? (async () => {
             let q = supabase
               .from('goals')
@@ -78,7 +79,7 @@ export function useGoals({ includeClosed = false } = {}) {
       return sortGoalsForDashboard([...fleetRows, ...cloverRows])
     },
     refetchInterval: 60_000,
-    enabled: supabaseConfigured || cloverOpsConfigured,
+    enabled: (viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured,
   })
 }
 
@@ -174,8 +175,9 @@ export interface GoalDetail {
 }
 
 export function useGoalDetail(id: string | null) {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['goal-detail', id],
+    queryKey: ['goal-detail', viewRole, id],
     queryFn: async (): Promise<GoalDetail | null> => {
       if (!id) return null
       if (isCloverOpsId(id)) {
@@ -202,6 +204,7 @@ export function useGoalDetail(id: string | null) {
           dependsOn: [],
         }
       }
+      if (viewRole !== 'admin') return null
 
       const [goalRes, tasksRes, commitsRes] = await Promise.all([
         supabase.from('goals').select(GOAL_COLUMNS).eq('id', id).maybeSingle(),
@@ -242,6 +245,8 @@ export function useGoalDetail(id: string | null) {
       }
     },
     refetchInterval: 30_000,
-    enabled: (supabaseConfigured || cloverOpsConfigured) && Boolean(id),
+    enabled:
+      ((viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured) &&
+      Boolean(id),
   })
 }

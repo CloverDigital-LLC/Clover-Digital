@@ -10,6 +10,7 @@
  */
 import { useQuery } from '@tanstack/react-query'
 import { supabase, supabaseConfigured } from '../lib/supabase'
+import { useVentureFilter } from '../context/VentureFilterContext'
 
 const ORG = 'cloverdigital-llc'
 const SITE = 'https://cloverdigital.com'
@@ -49,8 +50,9 @@ export interface SiteHealth {
 }
 
 export function useBrandRankHistory(term: string = PRIMARY_TERM) {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['brand-rank-history', term],
+    queryKey: ['brand-rank-history', viewRole, term],
     queryFn: async (): Promise<BrandRankPoint[]> => {
       const { data, error } = await supabase
         .from('brand_rank_snapshots')
@@ -62,7 +64,7 @@ export function useBrandRankHistory(term: string = PRIMARY_TERM) {
       return (data ?? []) as BrandRankPoint[]
     },
     refetchInterval: 60_000,
-    enabled: supabaseConfigured,
+    enabled: supabaseConfigured && viewRole === 'admin',
   })
 }
 

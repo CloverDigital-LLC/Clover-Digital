@@ -8,7 +8,7 @@ import {
 } from '../lib/supabase'
 import { adaptKnowledge } from '../lib/adapters'
 import type { KnowledgeRow } from '../lib/types'
-import { useVentureScope } from '../context/VentureFilterContext'
+import { useVentureFilter, useVentureScope } from '../context/VentureFilterContext'
 import {
   adaptCloverKnowledge,
   wantsCloverOps,
@@ -23,12 +23,13 @@ function warnCloverOps(label: string, error: { message?: string }) {
 }
 
 export function useKnowledge(limit = 6) {
+  const { viewRole } = useVentureFilter()
   const { projects } = useVentureScope()
   return useQuery({
-    queryKey: ['knowledge', limit, projects?.join(',') ?? 'all'],
+    queryKey: ['knowledge', limit, viewRole, projects?.join(',') ?? 'all'],
     queryFn: async () => {
       const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
-      const fleetPromise = supabaseConfigured
+      const fleetPromise = viewRole === 'admin' && supabaseConfigured
         ? (async () => {
             let q = supabase
               .from('knowledge')
@@ -73,6 +74,6 @@ export function useKnowledge(limit = 6) {
         .map(adaptKnowledge)
     },
     refetchInterval: 60_000,
-    enabled: supabaseConfigured || cloverOpsConfigured,
+    enabled: (viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured,
   })
 }

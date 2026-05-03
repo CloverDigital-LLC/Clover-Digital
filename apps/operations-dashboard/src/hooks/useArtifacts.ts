@@ -7,6 +7,7 @@ import {
 } from '../lib/supabase'
 import type { ArtifactParentKind, ArtifactRow } from '../lib/types'
 import { fromCloverOpsId, isCloverOpsId } from '../lib/cloverOps'
+import { useVentureFilter } from '../context/VentureFilterContext'
 
 const SIGNED_URL_TTL_SECONDS = 60 * 60 // 1 hour
 
@@ -31,14 +32,18 @@ export function useArtifacts(
   parentKind: ArtifactParentKind | null,
   parentId: string | null,
 ) {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['artifacts', parentKind, parentId],
-    enabled: (supabaseConfigured || cloverOpsConfigured) && Boolean(parentKind && parentId),
+    queryKey: ['artifacts', viewRole, parentKind, parentId],
+    enabled:
+      ((viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured) &&
+      Boolean(parentKind && parentId),
     refetchInterval: 50 * 60_000,
     staleTime: 30 * 60_000,
     queryFn: async (): Promise<ArtifactWithUrl[]> => {
       if (!parentKind || !parentId) return []
       const isClover = isCloverOpsId(parentId)
+      if (viewRole !== 'admin' && !isClover) return []
       const client = isClover ? cloverOpsSupabase : supabase
       const linkTable = isClover ? 'cd_artifact_links' : 'artifact_links'
       const select = isClover

@@ -62,7 +62,7 @@ export function DepartmentPicker({
     qc.invalidateQueries({ queryKey: ['blocked-tasks'] })
     qc.invalidateQueries({ queryKey: ['recently-shipped'] })
     qc.invalidateQueries({ queryKey: ['tasks-in-window'] })
-    qc.invalidateQueries({ queryKey: ['item-detail', 'task', taskId] })
+    qc.invalidateQueries({ queryKey: ['item-detail'] })
   }
 
   return (

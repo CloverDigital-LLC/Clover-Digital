@@ -12,10 +12,12 @@ import { useActiveWork, useBlockedTasks } from './useTasks'
 import { useCommitments } from './useCommitments'
 import { useHeartbeats } from './useHeartbeats'
 import type { KnowledgeRow } from '../lib/types'
+import { useVentureFilter } from '../context/VentureFilterContext'
 
 export function useLatestArchivistStatus() {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['latest-archivist-status'],
+    queryKey: ['latest-archivist-status', viewRole],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('knowledge')
@@ -30,7 +32,7 @@ export function useLatestArchivistStatus() {
       return (data ?? null) as KnowledgeRow | null
     },
     refetchInterval: 60_000,
-    enabled: supabaseConfigured,
+    enabled: supabaseConfigured && viewRole === 'admin',
   })
 }
 

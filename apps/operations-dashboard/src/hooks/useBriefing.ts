@@ -5,11 +5,13 @@ import { computeBriefing } from '../lib/adapters'
 import { useActiveWork, useRecentlyShipped, useBlockedTasks } from './useTasks'
 import { useCommitments } from './useCommitments'
 import { useHeartbeats } from './useHeartbeats'
+import { useVentureFilter } from '../context/VentureFilterContext'
 
 /** Pulls the latest daily_brief row for fallback narrative text. */
 export function useDailyBrief() {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['daily-brief'],
+    queryKey: ['daily-brief', viewRole],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('daily_briefs')
@@ -21,7 +23,7 @@ export function useDailyBrief() {
       return data
     },
     refetchInterval: 5 * 60_000,
-    enabled: supabaseConfigured,
+    enabled: supabaseConfigured && viewRole === 'admin',
   })
 }
 

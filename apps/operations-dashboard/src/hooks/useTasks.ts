@@ -33,12 +33,13 @@ function warnCloverOps(label: string, error: { message?: string }) {
 }
 
 export function useActiveWork() {
+  const { viewRole } = useVentureFilter()
   const { ventures } = useVentureScope()
   return useQuery({
-    queryKey: ['active-work', ventures?.join(',') ?? 'all'],
+    queryKey: ['active-work', viewRole, ventures?.join(',') ?? 'all'],
     queryFn: async () => {
       const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
-      const fleetPromise = supabaseConfigured
+      const fleetPromise = viewRole === 'admin' && supabaseConfigured
         ? (async () => {
             let q = supabase
               .from('agent_tasks')
@@ -74,18 +75,19 @@ export function useActiveWork() {
       return sortTasksNewestFirst([...fleetRows, ...cloverRows]).slice(0, 15)
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured || cloverOpsConfigured,
+    enabled: (viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured,
   })
 }
 
 export function useRecentlyShipped(daysBack = 7) {
+  const { viewRole } = useVentureFilter()
   const { ventures } = useVentureScope()
   return useQuery({
-    queryKey: ['recently-shipped', daysBack, ventures?.join(',') ?? 'all'],
+    queryKey: ['recently-shipped', daysBack, viewRole, ventures?.join(',') ?? 'all'],
     queryFn: async () => {
       const since = new Date(Date.now() - daysBack * 86_400_000).toISOString()
       const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
-      const fleetPromise = supabaseConfigured
+      const fleetPromise = viewRole === 'admin' && supabaseConfigured
         ? (async () => {
             let q = supabase
               .from('agent_tasks')
@@ -123,7 +125,7 @@ export function useRecentlyShipped(daysBack = 7) {
       return sortTasksNewestFirst([...fleetRows, ...cloverRows]).slice(0, 20)
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured || cloverOpsConfigured,
+    enabled: (viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured,
   })
 }
 
@@ -153,12 +155,13 @@ export function useCrossVentureWork() {
 }
 
 export function useBlockedTasks() {
+  const { viewRole } = useVentureFilter()
   const { ventures } = useVentureScope()
   return useQuery({
-    queryKey: ['blocked-tasks', ventures?.join(',') ?? 'all'],
+    queryKey: ['blocked-tasks', viewRole, ventures?.join(',') ?? 'all'],
     queryFn: async () => {
       const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
-      const fleetPromise = supabaseConfigured
+      const fleetPromise = viewRole === 'admin' && supabaseConfigured
         ? (async () => {
             let q = supabase
               .from('agent_tasks')
@@ -194,7 +197,7 @@ export function useBlockedTasks() {
       return sortTasksNewestFirst([...fleetRows, ...cloverRows]).slice(0, 20)
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured || cloverOpsConfigured,
+    enabled: (viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured,
   })
 }
 
@@ -213,7 +216,7 @@ export function useTasksInWindow(daysBack = 7) {
       const since = new Date(Date.now() - daysBack * 86_400_000).toISOString()
       const scope = viewRole === 'team' ? TEAM_VENTURES : null
       const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
-      const fleetPromise = supabaseConfigured
+      const fleetPromise = viewRole === 'admin' && supabaseConfigured
         ? (async () => {
             let q = supabase
               .from('agent_tasks')
@@ -247,6 +250,6 @@ export function useTasksInWindow(daysBack = 7) {
       return sortTasksNewestFirst([...fleetRows, ...cloverRows])
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured || cloverOpsConfigured,
+    enabled: (viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured,
   })
 }

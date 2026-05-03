@@ -22,6 +22,7 @@ import {
   type CloverKnowledgeRow,
   type CloverTaskRow,
 } from '../lib/cloverOps'
+import { useVentureFilter } from '../context/VentureFilterContext'
 
 const REFRESH_MS = 60_000
 
@@ -46,29 +47,34 @@ export interface AgentWorkBuckets {
 }
 
 export function useAgentTasks(agentId: string) {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['agent-tasks', agentId],
+    queryKey: ['agent-tasks', viewRole, agentId],
     queryFn: async (): Promise<AgentWorkBuckets> => {
       const sevenDaysAgo = new Date(
         Date.now() - 7 * 86_400_000,
       ).toISOString()
       const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
       const [openRes, doneRes, cloverOpenRes, cloverDoneRes] = await Promise.all([
-        supabase
-          .from('agent_tasks')
-          .select(TASK_COLUMNS)
-          .or(`agent.eq.${agentId},assigned_to.eq.${agentId}`)
-          .not('status', 'in', '(completed,cancelled,failed)')
-          .order('created_at', { ascending: false })
-          .limit(50),
-        supabase
-          .from('agent_tasks')
-          .select(TASK_COLUMNS)
-          .or(`agent.eq.${agentId},assigned_to.eq.${agentId}`)
-          .eq('status', 'completed')
-          .gte('completed_at', sevenDaysAgo)
-          .order('completed_at', { ascending: false })
-          .limit(20),
+        viewRole === 'admin' && supabaseConfigured
+          ? supabase
+              .from('agent_tasks')
+              .select(TASK_COLUMNS)
+              .or(`agent.eq.${agentId},assigned_to.eq.${agentId}`)
+              .not('status', 'in', '(completed,cancelled,failed)')
+              .order('created_at', { ascending: false })
+              .limit(50)
+          : Promise.resolve({ data: [], error: null }),
+        viewRole === 'admin' && supabaseConfigured
+          ? supabase
+              .from('agent_tasks')
+              .select(TASK_COLUMNS)
+              .or(`agent.eq.${agentId},assigned_to.eq.${agentId}`)
+              .eq('status', 'completed')
+              .gte('completed_at', sevenDaysAgo)
+              .order('completed_at', { ascending: false })
+              .limit(20)
+          : Promise.resolve({ data: [], error: null }),
         cloverReady
           ? cloverOpsSupabase
               .from('cd_tasks')
@@ -117,7 +123,7 @@ export function useAgentTasks(agentId: string) {
       }
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured || cloverOpsConfigured,
+    enabled: (viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured,
   })
 }
 
@@ -136,8 +142,9 @@ export interface AgentMessageRow {
 }
 
 export function useAgentMessages(agentId: string, limit = 12) {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['agent-messages', agentId, limit],
+    queryKey: ['agent-messages', viewRole, agentId, limit],
     queryFn: async (): Promise<AgentMessageRow[]> => {
       const { data, error } = await supabase
         .from('agent_messages')
@@ -151,7 +158,7 @@ export function useAgentMessages(agentId: string, limit = 12) {
       return (data ?? []) as AgentMessageRow[]
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured,
+    enabled: supabaseConfigured && viewRole === 'admin',
   })
 }
 
@@ -168,8 +175,9 @@ export interface AgentSessionRow {
 }
 
 export function useAgentSessions(agentId: string, limit = 10) {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['agent-sessions', agentId, limit],
+    queryKey: ['agent-sessions', viewRole, agentId, limit],
     queryFn: async (): Promise<AgentSessionRow[]> => {
       const { data, error } = await supabase
         .from('agent_sessions')
@@ -181,15 +189,16 @@ export function useAgentSessions(agentId: string, limit = 10) {
       return (data ?? []) as AgentSessionRow[]
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured,
+    enabled: supabaseConfigured && viewRole === 'admin',
   })
 }
 
 // ─── Latest heartbeat ────────────────────────────────────────────────
 
 export function useAgentLatestHeartbeat(agentId: string) {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['agent-latest-heartbeat', agentId],
+    queryKey: ['agent-latest-heartbeat', viewRole, agentId],
     queryFn: async (): Promise<AgentHeartbeatRow | null> => {
       const { data, error } = await supabase
         .from('agent_heartbeats')
@@ -202,7 +211,7 @@ export function useAgentLatestHeartbeat(agentId: string) {
       return (data ?? null) as AgentHeartbeatRow | null
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured,
+    enabled: supabaseConfigured && viewRole === 'admin',
   })
 }
 
@@ -226,14 +235,27 @@ export interface DerekPipelineStats {
 }
 
 export function useDerekPipelineStats() {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['derek-pipeline-stats'],
+    queryKey: ['derek-pipeline-stats', viewRole],
     queryFn: async (): Promise<DerekPipelineStats> => {
       const sevenDaysAgo = new Date(
         Date.now() - 7 * 86_400_000,
       ).toISOString()
       const useCloverOps = cloverOpsConfigured && (await cloverOpsSessionReady())
-      const client = useCloverOps ? cloverOpsSupabase : supabase
+      const client = useCloverOps
+        ? cloverOpsSupabase
+        : viewRole === 'admin' && supabaseConfigured
+          ? supabase
+          : null
+      if (!client) {
+        return {
+          active_prospects: 0,
+          qualified_total: 0,
+          touched_7d: 0,
+          top_recent: [],
+        }
+      }
       const [activeRes, qualifiedRes, touchedRes, topRes] = await Promise.all([
         client
           .from('cd_target_accounts')
@@ -268,7 +290,7 @@ export function useDerekPipelineStats() {
       }
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured || cloverOpsConfigured,
+    enabled: (viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured,
   })
 }
 
@@ -281,8 +303,9 @@ export interface HermesCommsStats {
 }
 
 export function useHermesCommsStats() {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['hermes-comms-stats'],
+    queryKey: ['hermes-comms-stats', viewRole],
     queryFn: async (): Promise<HermesCommsStats> => {
       const since = new Date(Date.now() - 24 * 3_600_000).toISOString()
       const { data, error } = await supabase
@@ -323,7 +346,7 @@ export function useHermesCommsStats() {
       }
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured,
+    enabled: supabaseConfigured && viewRole === 'admin',
   })
 }
 
@@ -340,8 +363,9 @@ export interface BigHossBuildStats {
 }
 
 export function useBigHossBuildStats() {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['bighoss-build-stats'],
+    queryKey: ['bighoss-build-stats', viewRole],
     queryFn: async (): Promise<BigHossBuildStats> => {
       const sevenDaysAgo = new Date(
         Date.now() - 7 * 86_400_000,
@@ -368,23 +392,26 @@ export function useBigHossBuildStats() {
       }
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured,
+    enabled: supabaseConfigured && viewRole === 'admin',
   })
 }
 
 // ─── Knowledge authored ──────────────────────────────────────────────
 
 export function useAgentKnowledge(agentId: string, limit = 8) {
+  const { viewRole } = useVentureFilter()
   return useQuery({
-    queryKey: ['agent-knowledge', agentId, limit],
+    queryKey: ['agent-knowledge', viewRole, agentId, limit],
     queryFn: async (): Promise<KnowledgeRow[]> => {
       const [fleetRes, cloverRes] = await Promise.all([
-        supabase
-          .from('knowledge')
-          .select('*')
-          .eq('source_agent', agentId)
-          .order('created_at', { ascending: false })
-          .limit(limit),
+        viewRole === 'admin' && supabaseConfigured
+          ? supabase
+              .from('knowledge')
+              .select('*')
+              .eq('source_agent', agentId)
+              .order('created_at', { ascending: false })
+              .limit(limit)
+          : Promise.resolve({ data: [], error: null }),
         cloverOpsConfigured && (await cloverOpsSessionReady())
           ? cloverOpsSupabase
               .from('cd_knowledge')
@@ -404,6 +431,6 @@ export function useAgentKnowledge(agentId: string, limit = 8) {
         .slice(0, limit)
     },
     refetchInterval: REFRESH_MS,
-    enabled: supabaseConfigured || cloverOpsConfigured,
+    enabled: (viewRole === 'admin' && supabaseConfigured) || cloverOpsConfigured,
   })
 }
