@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
 const ALLOWED_TABLES = new Set([
+  'cd_agent_templates',
   'cd_goals',
   'cd_knowledge',
   'cd_target_accounts',

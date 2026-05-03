@@ -15,7 +15,8 @@ export function Header() {
   const [location] = useLocation()
   const isAgents = location.startsWith('/agents')
   const isProjects = location.startsWith('/projects')
-  const isHome = !isAgents && !isProjects
+  const isDepartments = location.startsWith('/departments')
+  const isHome = !isAgents && !isProjects && !isDepartments
 
   return (
     <header className="sticky top-0 z-50 bg-cream-50/95 dark:bg-night-900/95 backdrop-blur-sm border-b border-cream-300/80 dark:border-night-700">
@@ -40,16 +41,12 @@ export function Header() {
               design mode
             </span>
           )}
-          {/* Top nav — admin-only. Team view (cofounders) lives on the
-              dashboard; the project + agent surfaces are Mason follow-ups
-              and we don't want cofounders bouncing between them. */}
-          {viewRole === 'admin' && (
-            <nav className="hidden md:flex items-center gap-1 ml-6 text-[12px]">
-              <NavPill href="/" active={isHome}>Dashboard</NavPill>
-              <NavPill href="/projects" active={isProjects}>Projects</NavPill>
-              <NavPill href="/agents" active={isAgents}>Agents</NavPill>
-            </nav>
-          )}
+          <nav className="hidden md:flex items-center gap-1 ml-6 text-[12px]">
+            <NavPill href="/" active={isHome}>Dashboard</NavPill>
+            {viewRole === 'admin' && <NavPill href="/projects" active={isProjects}>Projects</NavPill>}
+            <NavPill href="/departments" active={isDepartments}>Departments</NavPill>
+            <NavPill href="/agents" active={isAgents}>Agents</NavPill>
+          </nav>
         </div>
         <div className="flex items-center gap-4">
           <div

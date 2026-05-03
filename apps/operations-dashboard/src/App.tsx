@@ -7,6 +7,9 @@ import { useVentureFilter } from './context/VentureFilterContext'
 import { DashboardPage } from './pages/DashboardPage'
 import { AgentsIndexPage } from './pages/AgentsIndexPage'
 import { AgentProfilePage } from './pages/AgentProfilePage'
+import { CloverAgentsPage } from './pages/CloverAgentsPage'
+import { DepartmentsIndexPage } from './pages/DepartmentsIndexPage'
+import { DepartmentDetailPage } from './pages/DepartmentDetailPage'
 import { ProjectsIndexPage } from './pages/ProjectsIndexPage'
 import { ProjectDetailPage } from './pages/ProjectDetailPage'
 import { DetailDrawer } from './components/Detail/DetailDrawer'
@@ -69,6 +72,8 @@ export default function App() {
 
       <Switch>
         <Route path="/" component={DashboardPage} />
+        <Route path="/departments" component={DepartmentsIndexPage} />
+        <Route path="/departments/:department" component={DepartmentDetailPage} />
         {viewRole === 'admin' ? (
           <>
             <Route path="/agents" component={AgentsIndexPage} />
@@ -77,12 +82,12 @@ export default function App() {
             <Route path="/projects/:slug" component={ProjectDetailPage} />
           </>
         ) : (
-          // Team view: cofounders stay on the dashboard. If they hit
-          // a direct URL for /projects or /agents (or anything else),
-          // bounce them home rather than 404.
-          <Route>
-            <Redirect to="/" />
-          </Route>
+          <>
+            <Route path="/agents" component={CloverAgentsPage} />
+            <Route>
+              <Redirect to="/" />
+            </Route>
+          </>
         )}
         <Route>
           {/* 404 — anything off-route, route home with a soft notice */}

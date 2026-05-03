@@ -12,9 +12,11 @@
  * Fleet gets agent rollup, etc.).
  */
 import { Link, useRoute } from 'wouter'
+import { DepartmentNav } from '../components/DepartmentNav'
 import { Card, AgentPill, EmptyState, StatusPill } from '../components/atoms'
 import { useDetail } from '../components/Detail/DetailContext'
-import { displayTaskStatus, fmtDate, relTime } from '../lib/adapters'
+import { displayTaskStatus, filterTasksByDepartment, fmtDate, relTime } from '../lib/adapters'
+import { DEPARTMENTS } from '../lib/departments'
 import { getProject, type Project } from '../lib/project-roster'
 import {
   useProjectTasks,
@@ -83,6 +85,22 @@ function ProjectDetail({ project }: { project: Project }) {
       {/* Per-venture specialty panel between header and operational columns */}
       <ProjectSpecialty slug={project.id} />
 
+      {project.id === 'clover-digital' && (
+        <div className="mt-5 rounded-xl border border-cream-300/80 bg-cream-50 px-5 py-4 shadow-card">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <div className="text-[11px] uppercase tracking-[0.12em] text-ink-400">
+                Clover lanes
+              </div>
+              <div className="text-[13px] text-ink-600 mt-1">
+                Jump into department-scoped goals and work.
+              </div>
+            </div>
+            <DepartmentNav />
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-12 gap-5 mt-6">
         {/* Left column — operational */}
         <div className="col-span-12 lg:col-span-8 space-y-5">
@@ -93,11 +111,52 @@ function ProjectDetail({ project }: { project: Project }) {
 
         {/* Right column — context */}
         <div className="col-span-12 lg:col-span-4 space-y-5">
+          {project.id === 'clover-digital' && (
+            <CloverDepartmentPanel goals={openGoals} buckets={buckets} />
+          )}
           <AboutCard project={project} />
           <AgentsPanel touches={agentTouches.data ?? []} />
         </div>
       </div>
     </main>
+  )
+}
+
+function CloverDepartmentPanel({
+  goals,
+  buckets,
+}: {
+  goals: GoalRow[]
+  buckets: ProjectTaskBuckets
+}) {
+  const allTasks = [
+    ...buckets.running,
+    ...buckets.queued,
+    ...buckets.blocked,
+    ...buckets.recently_completed,
+  ]
+  return (
+    <Card title="Departments">
+      <ul className="space-y-1.5">
+        {DEPARTMENTS.map((department) => {
+          const taskCount = filterTasksByDepartment(allTasks, department.id).length
+          const goalCount = goals.filter((goal) => goal.department === department.id).length
+          return (
+            <li key={department.id}>
+              <Link href={`/departments/${department.slug}`}>
+                <a className="flex items-center gap-3 -mx-2 px-2 py-2 rounded-md hover:bg-cream-100/70 transition">
+                  <span className={`h-2 w-2 rounded-full ${department.accent}`} />
+                  <span className="text-[13px] text-ink-900">{department.label}</span>
+                  <span className="ml-auto text-[11px] text-ink-400 tabular-nums">
+                    {goalCount} goals · {taskCount} work
+                  </span>
+                </a>
+              </Link>
+            </li>
+          )
+        })}
+      </ul>
+    </Card>
   )
 }
 

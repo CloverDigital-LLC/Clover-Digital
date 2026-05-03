@@ -39,8 +39,9 @@ interface ContextValue {
   set: (v: FilterableVenture | null) => void
   toggle: (v: FilterableVenture) => void
   clear: () => void
-  // Department filter — only meaningful in team view (admin slices by venture).
-  // Inferred client-side from agent + tags via inferDepartment().
+  // Department filter — Clover Digital lane scope. Team view uses it on the
+  // home dashboard; admin can use it when drilling into Clover work.
+  // Inferred client-side from explicit department, agent, and tags.
   selectedDepartment: FilterableDepartment | null
   setSelectedDepartment: (d: FilterableDepartment | null) => void
   toggleDepartment: (d: FilterableDepartment) => void
@@ -89,9 +90,8 @@ export function VentureFilterProvider({ children }: { children: ReactNode }) {
     [viewRole],
   )
   const setSelectedDepartment = useCallback(
-    (d: FilterableDepartment | null) =>
-      setSelectedDept(viewRole === 'admin' ? null : d),
-    [viewRole],
+    (d: FilterableDepartment | null) => setSelectedDept(d),
+    [],
   )
   const clearDepartment = useCallback(() => setSelectedDept(null), [])
   const toggleDepartment = useCallback(
@@ -104,8 +104,7 @@ export function VentureFilterProvider({ children }: { children: ReactNode }) {
     viewRole === 'team' && selected && selected !== 'clover-digital'
       ? null
       : selected
-  const safeSelectedDepartment =
-    viewRole === 'admin' ? null : selectedDepartment
+  const safeSelectedDepartment = selectedDepartment
 
   const value = useMemo(
     () => ({

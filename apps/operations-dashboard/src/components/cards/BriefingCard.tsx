@@ -124,9 +124,17 @@ export function BriefingCard() {
   )
 
   const departmentDistribution = useMemo(
-    () => computeDepartmentDistribution(windowTasks, 7),
-    [windowTasks],
+    () =>
+      computeDepartmentDistribution(
+        viewRole === 'admin'
+          ? windowTasks.filter((task) => task.venture === 'clover-digital')
+          : windowTasks,
+        7,
+      ),
+    [viewRole, windowTasks],
   )
+  const showDepartmentBars =
+    viewRole === 'team' || (viewRole === 'admin' && selected === 'clover-digital')
 
   // Use the adapter's needs_attention list verbatim — replies-to-review
   // was intentionally suppressed at the source (see adapters.ts) since
@@ -195,9 +203,9 @@ export function BriefingCard() {
             )}
           </div>
 
-          {/* Bars: project distribution in admin, department activity in team */}
+          {/* Bars: project distribution in admin; department activity once Clover is selected. */}
           <div className="col-span-12 lg:col-span-3">
-            {viewRole === 'admin' ? (
+            {!showDepartmentBars ? (
               <>
                 <div className="text-[11px] uppercase tracking-[0.14em] text-clover-200 font-medium mb-3 flex items-center justify-between gap-2">
                   <span>Where work went · 7d</span>
@@ -222,7 +230,10 @@ export function BriefingCard() {
                         share={v}
                         selected={selected === v.venture}
                         anySelected={selected !== null}
-                        onClick={() => toggle(v.venture as never)}
+                        onClick={() => {
+                          clearDepartment()
+                          toggle(v.venture as never)
+                        }}
                       />
                     ))}
                   </ul>
@@ -232,14 +243,21 @@ export function BriefingCard() {
               <>
                 <div className="text-[11px] uppercase tracking-[0.14em] text-clover-200 font-medium mb-3 flex items-center justify-between gap-2">
                   <span>Department activity · 7d</span>
-                  {selectedDepartment && (
+                  {selectedDepartment ? (
                     <button
                       onClick={clearDepartment}
                       className="text-[10px] uppercase tracking-[0.1em] text-ochre-300 hover:text-ochre-100 transition"
                     >
                       Show all
                     </button>
-                  )}
+                  ) : viewRole === 'admin' ? (
+                    <button
+                      onClick={clear}
+                      className="text-[10px] uppercase tracking-[0.1em] text-ochre-300 hover:text-ochre-100 transition"
+                    >
+                      Projects
+                    </button>
+                  ) : null}
                 </div>
                 {departmentDistribution.length === 0 ? (
                   <div className="text-[13px] text-clover-200 italic">

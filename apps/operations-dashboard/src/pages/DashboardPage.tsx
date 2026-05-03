@@ -30,6 +30,8 @@ import { useHeartbeats } from '../hooks/useHeartbeats'
 import { PROJECT_ROSTER } from '../lib/project-roster'
 import { useFocusMode } from '../hooks/useFocusMode'
 import { dashboardSurface } from '../lib/surface'
+import { CLOVER_AGENT_REGISTRY } from '../lib/cloverAgents'
+import { DEPARTMENTS } from '../lib/departments'
 
 export function DashboardPage() {
   const { role } = useAuth()
@@ -157,6 +159,16 @@ export function DashboardPage() {
             <CloverDeepLink />
             <ProjectsDeepLink />
             <AgentsDeepLink />
+          </div>
+        </div>
+      )}
+
+      {!isAdminView && !effectiveFocus && (
+        <div className="mt-12">
+          <SectionHeader title="Team areas" sub="Department lanes and Clover agents." />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <TeamDepartmentsDeepLink />
+            <TeamAgentsDeepLink />
           </div>
         </div>
       )}
@@ -362,6 +374,52 @@ function AgentsDeepLink() {
         { value: total, label: 'agents' },
         { value: working, label: 'working', tone: 'clover' },
         { value: stale, label: 'stale', tone: stale > 0 ? 'ochre' : 'ink' },
+      ]}
+    />
+  )
+}
+
+function TeamDepartmentsDeepLink() {
+  const goals = useProjectGoals('clover-digital')
+  const openGoals = (goals.data ?? []).filter(
+    (g) => g.status !== 'done' && g.status !== 'dropped',
+  ).length
+  return (
+    <DeepLinkTile
+      href="/departments"
+      title="Departments"
+      stats={[
+        { value: DEPARTMENTS.length, label: 'lanes' },
+        { value: openGoals, label: 'open goals', tone: 'clover' },
+      ]}
+    />
+  )
+}
+
+function TeamAgentsDeepLink() {
+  const tasks = useProjectTasks('clover-digital')
+  const buckets = tasks.data ?? {
+    running: [],
+    queued: [],
+    blocked: [],
+    recently_completed: [],
+  }
+  const open =
+    buckets.running.length +
+    buckets.queued.length +
+    buckets.blocked.length
+  return (
+    <DeepLinkTile
+      href="/agents"
+      title="Clover agents"
+      stats={[
+        { value: CLOVER_AGENT_REGISTRY.length, label: 'registered' },
+        { value: open, label: 'open work', tone: 'clover' },
+        {
+          value: buckets.blocked.length,
+          label: 'blocked',
+          tone: buckets.blocked.length > 0 ? 'ochre' : 'ink',
+        },
       ]}
     />
   )
