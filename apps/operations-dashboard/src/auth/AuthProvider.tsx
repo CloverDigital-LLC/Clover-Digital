@@ -12,6 +12,7 @@ import {
   supabase,
   supabaseConfigured,
 } from '../lib/supabase'
+import { adminSurfaceEnabled } from '../lib/surface'
 
 export type Role = 'admin' | 'team' | 'guest'
 
@@ -30,33 +31,46 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | null>(null)
 
+const primaryAuthClient = adminSurfaceEnabled ? supabase : cloverOpsSupabase
+const primaryAuthConfigured = adminSurfaceEnabled
+  ? supabaseConfigured
+  : cloverOpsConfigured
+const secondaryAuthClient = adminSurfaceEnabled ? cloverOpsSupabase : supabase
+const secondaryAuthConfigured = adminSurfaceEnabled
+  ? cloverOpsConfigured
+  : supabaseConfigured
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(supabaseConfigured)
-  const [role, setRole] = useState<Role>(supabaseConfigured ? 'guest' : 'admin')
+  const [loading, setLoading] = useState(primaryAuthConfigured)
+  const [role, setRole] = useState<Role>(
+    primaryAuthConfigured ? 'guest' : 'admin',
+  )
   const [roleResolved, setRoleResolved] = useState(false)
 
   useEffect(() => {
-    if (!supabaseConfigured) {
+    if (!primaryAuthConfigured) {
       return
     }
-    supabase.auth.getSession().then(({ data }) => {
+    primaryAuthClient.auth.getSession().then(({ data }) => {
       setSession(data.session)
       setLoading(false)
     })
-    const { data: sub } = supabase.auth.onAuthStateChange((_evt, sess) => {
-      setSession(sess)
-    })
+    const { data: sub } = primaryAuthClient.auth.onAuthStateChange(
+      (_evt, sess) => {
+        setSession(sess)
+      },
+    )
     return () => sub.subscription.unsubscribe()
   }, [])
 
-  // Secondary Clover Ops project: the dashboard still uses prairie-fleet for
-  // primary auth/role, but this warms the Clover Ops client so source-aware
-  // Clover reads can use a persisted Clover session when present.
+  // Keep the non-primary project warmed so sign-out clears both projects and
+  // admin/cofounder surfaces can coexist in the same browser without token
+  // storage collisions.
   useEffect(() => {
-    if (!cloverOpsConfigured) return
-    cloverOpsSupabase.auth.getSession()
-    const { data: sub } = cloverOpsSupabase.auth.onAuthStateChange(() => {})
+    if (!secondaryAuthConfigured) return
+    secondaryAuthClient.auth.getSession()
+    const { data: sub } = secondaryAuthClient.auth.onAuthStateChange(() => {})
     return () => sub.subscription.unsubscribe()
   }, [])
 
@@ -64,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // source of truth — env-var inference would let anyone with a valid email
   // claim "team" client-side, even if RLS would block their queries.
   useEffect(() => {
-    if (!supabaseConfigured) return
+    if (!primaryAuthConfigured) return
     if (!session?.user) {
       setRole('guest')
       setRoleResolved(true)
@@ -72,15 +86,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     let cancelled = false
     setRoleResolved(false)
-    supabase
-      .rpc('dashboard_role')
-      .then(({ data, error }) => {
+
+    const resolveRole = adminSurfaceEnabled
+      ? primaryAuthClient.rpc('dashboard_role')
+      : cloverOpsSupabase
+          .from('cd_members')
+          .select('role')
+          .eq('status', 'active')
+          .limit(1)
+          .maybeSingle()
+
+    resolveRole.then(({ data, error }) => {
         if (cancelled) return
         if (error || !data) {
-          // RPC returned null → email isn't on the allowlist.
+          // No allowlist/member row means the user is authenticated but not
+          // authorized for this dashboard.
           setRole('guest')
         } else {
-          setRole(data as Role)
+          const resolvedRole = adminSurfaceEnabled
+            ? (data as Role)
+            : data.role === 'owner' || data.role === 'admin'
+              ? 'admin'
+              : 'team'
+          setRole(resolvedRole)
         }
         setRoleResolved(true)
       })
@@ -90,7 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [session?.access_token])
 
   async function signInWithMagicLink(email: string) {
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await primaryAuthClient.auth.signInWithOtp({
       email,
       options: { emailRedirectTo: window.location.origin },
     })
@@ -98,8 +126,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signOut() {
-    await supabase.auth.signOut()
-    if (cloverOpsConfigured) await cloverOpsSupabase.auth.signOut()
+    await primaryAuthClient.auth.signOut()
+    if (secondaryAuthConfigured) await secondaryAuthClient.auth.signOut()
   }
 
   // "Unauthorized" = signed-in (Supabase Auth said yes) but not on the
@@ -116,7 +144,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     unauthorized,
     signInWithMagicLink,
     signOut,
-    designMode: !supabaseConfigured,
+    designMode: !primaryAuthConfigured,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
