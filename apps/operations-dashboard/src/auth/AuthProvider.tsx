@@ -118,11 +118,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [session?.access_token])
 
   async function signInWithMagicLink(email: string) {
-    const { error } = await primaryAuthClient.auth.signInWithOtp({
+    const primary = await primaryAuthClient.auth.signInWithOtp({
       email,
       options: { emailRedirectTo: window.location.origin },
     })
-    return { error: error as Error | null }
+    if (
+      adminSurfaceEnabled &&
+      secondaryAuthConfigured &&
+      secondaryAuthClient !== primaryAuthClient
+    ) {
+      const secondary = await secondaryAuthClient.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: window.location.origin },
+      })
+      return { error: (primary.error ?? secondary.error) as Error | null }
+    }
+    return { error: primary.error as Error | null }
   }
 
   async function signOut() {

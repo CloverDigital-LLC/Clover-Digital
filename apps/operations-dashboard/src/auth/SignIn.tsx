@@ -39,8 +39,9 @@ export function SignIn() {
           <div className="rounded-lg bg-clover-50 border border-clover-200 px-4 py-4 text-[13.5px] text-clover-800">
             <div className="font-medium mb-1">Check your email.</div>
             <div className="text-clover-700 text-[12.5px]">
-              We sent a sign-in link to <span className="font-mono">{email}</span>.
-              The link works for 60 minutes.
+              We sent the sign-in link{import.meta.env.VITE_DASHBOARD_SURFACE === 'admin' ? 's' : ''} to{' '}
+              <span className="font-mono">{email}</span>. The link
+              {import.meta.env.VITE_DASHBOARD_SURFACE === 'admin' ? 's work' : ' works'} for 60 minutes.
             </div>
           </div>
         ) : (
