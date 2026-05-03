@@ -51,6 +51,8 @@ export type CloverTaskRow = {
   started_at: string | null
   completed_at: string | null
   stale_notified_at: string | null
+  archived_at: string | null
+  archive_reason: string | null
   created_at: string
   updated_at: string
 }

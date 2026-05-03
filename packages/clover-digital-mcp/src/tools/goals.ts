@@ -86,6 +86,7 @@ export async function handleGetGoal(args: { id: string }) {
     .from("cd_tasks")
     .select("id, ticket_key, title, status, department, priority")
     .eq("goal_id", goal.id)
+    .is("archived_at", null)
     .order("created_at", { ascending: false });
   if (tasksError) return toError(tasksError.message);
 

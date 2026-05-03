@@ -29,7 +29,7 @@ import {
 import { useVentureFilter } from '../../context/VentureFilterContext'
 
 const CLOVER_TASK_COLUMNS =
-  'id, ticket_key, goal_id, parent_task_id, title, description, acceptance_criteria, assigned_to, requested_by, department, status, priority, due_date, output, error, source_ref, started_at, completed_at, stale_notified_at, created_at, updated_at'
+  'id, ticket_key, goal_id, parent_task_id, title, description, acceptance_criteria, assigned_to, requested_by, department, status, priority, due_date, output, error, source_ref, started_at, completed_at, stale_notified_at, archived_at, archive_reason, created_at, updated_at'
 const CLOVER_GOAL_COLUMNS =
   'id, public_key, title, description, department, owner, status, priority, target_date, success_criteria, notes, created_by, created_at, updated_at, resolved_at'
 const CLOVER_KNOWLEDGE_COLUMNS =
@@ -172,6 +172,7 @@ export function useItemDetail(kind: DetailKind | null, id: string | null) {
             cloverOpsSupabase
               .from('cd_tasks')
               .select(CLOVER_TASK_COLUMNS)
+              .is('archived_at', null)
               .eq('goal_id', rawId)
               .order('created_at', { ascending: false }),
           ])

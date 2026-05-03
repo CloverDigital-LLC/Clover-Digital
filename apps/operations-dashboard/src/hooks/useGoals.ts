@@ -18,13 +18,14 @@ import {
   type CloverGoalRow,
   type CloverTaskRow,
 } from '../lib/cloverOps'
+import { CLOVER_PROJECT_FILTER, withoutCloverVentures } from '../lib/dataRouting'
 
 const GOAL_COLUMNS =
   'id, title, description, venture, department, owner, status, priority, target_date, notes, depends_on_goal_ids, success_criteria, created_at, updated_at, resolved_at, created_by'
 const CLOVER_GOAL_COLUMNS =
   'id, public_key, title, description, department, owner, status, priority, target_date, success_criteria, notes, created_by, created_at, updated_at, resolved_at'
 const CLOVER_TASK_COLUMNS =
-  'id, ticket_key, goal_id, parent_task_id, title, description, acceptance_criteria, assigned_to, requested_by, department, status, priority, due_date, output, error, source_ref, started_at, completed_at, stale_notified_at, created_at, updated_at'
+  'id, ticket_key, goal_id, parent_task_id, title, description, acceptance_criteria, assigned_to, requested_by, department, status, priority, due_date, output, error, source_ref, started_at, completed_at, stale_notified_at, archived_at, archive_reason, created_at, updated_at'
 
 function warnCloverOps(label: string, error: { message?: string }) {
   console.warn(`[clover-ops] ${label} unavailable:`, error.message ?? error)
@@ -42,14 +43,17 @@ export function useGoals({ includeClosed = false } = {}) {
     queryKey: ['goals', viewRole, ventures?.join(',') ?? 'all', includeClosed],
     queryFn: async () => {
       const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
+      const fleetVentures = withoutCloverVentures(ventures)
       const fleetPromise = viewRole === 'admin' && supabaseConfigured
         ? (async () => {
+            if (fleetVentures?.length === 0) return [] as GoalRow[]
             let q = supabase
               .from('goals')
               .select(GOAL_COLUMNS)
               .order('priority', { ascending: true, nullsFirst: false })
               .order('target_date', { ascending: true, nullsFirst: false })
-            if (ventures) q = q.in('venture', ventures)
+            if (fleetVentures) q = q.in('venture', fleetVentures)
+            else q = q.not('venture', 'in', CLOVER_PROJECT_FILTER)
             if (!includeClosed) q = q.not('status', 'in', '(done,dropped)')
             const { data, error } = await q
             if (error) throw error
@@ -118,6 +122,7 @@ export function useGoalsProgress(goalIds: string[]) {
           ? cloverOpsSupabase
               .from('cd_tasks')
               .select('goal_id, status')
+              .is('archived_at', null)
               .in('goal_id', cloverGoalIds.map(fromCloverOpsId))
           : Promise.resolve({ data: [], error: null }),
       ])
@@ -191,6 +196,7 @@ export function useGoalDetail(id: string | null) {
           cloverOpsSupabase
             .from('cd_tasks')
             .select(CLOVER_TASK_COLUMNS)
+            .is('archived_at', null)
             .eq('goal_id', rawId)
             .order('created_at', { ascending: false }),
         ])

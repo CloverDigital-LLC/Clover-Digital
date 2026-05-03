@@ -23,13 +23,14 @@ import {
   type CloverTaskRow,
 } from '../lib/cloverOps'
 import { useVentureFilter } from '../context/VentureFilterContext'
+import { CLOVER_PROJECT_FILTER } from '../lib/dataRouting'
 
 const REFRESH_MS = 60_000
 
 const TASK_COLUMNS =
   'id, agent, status, title, description, venture, department, goal_id, priority, started_at, completed_at, created_at, assigned_to, due_date, output, error'
 const CLOVER_TASK_COLUMNS =
-  'id, ticket_key, goal_id, parent_task_id, title, description, acceptance_criteria, assigned_to, requested_by, department, status, priority, due_date, output, error, source_ref, started_at, completed_at, stale_notified_at, created_at, updated_at'
+  'id, ticket_key, goal_id, parent_task_id, title, description, acceptance_criteria, assigned_to, requested_by, department, status, priority, due_date, output, error, source_ref, started_at, completed_at, stale_notified_at, archived_at, archive_reason, created_at, updated_at'
 const CLOVER_KNOWLEDGE_COLUMNS =
   'id, category, title, content, source_agent, source_channel, visibility, tags, is_private, confidence, related_task_id, related_goal_id, superseded_by, expires_at, last_reinforced_at, created_at, updated_at'
 
@@ -61,6 +62,7 @@ export function useAgentTasks(agentId: string) {
               .from('agent_tasks')
               .select(TASK_COLUMNS)
               .or(`agent.eq.${agentId},assigned_to.eq.${agentId}`)
+              .not('venture', 'in', CLOVER_PROJECT_FILTER)
               .not('status', 'in', '(completed,cancelled,failed)')
               .order('created_at', { ascending: false })
               .limit(50)
@@ -70,6 +72,7 @@ export function useAgentTasks(agentId: string) {
               .from('agent_tasks')
               .select(TASK_COLUMNS)
               .or(`agent.eq.${agentId},assigned_to.eq.${agentId}`)
+              .not('venture', 'in', CLOVER_PROJECT_FILTER)
               .eq('status', 'completed')
               .gte('completed_at', sevenDaysAgo)
               .order('completed_at', { ascending: false })
@@ -79,6 +82,7 @@ export function useAgentTasks(agentId: string) {
           ? cloverOpsSupabase
               .from('cd_tasks')
               .select(CLOVER_TASK_COLUMNS)
+              .is('archived_at', null)
               .eq('assigned_to', agentId)
               .not('status', 'in', '(completed,cancelled,failed)')
               .order('created_at', { ascending: false })
@@ -88,6 +92,7 @@ export function useAgentTasks(agentId: string) {
           ? cloverOpsSupabase
               .from('cd_tasks')
               .select(CLOVER_TASK_COLUMNS)
+              .is('archived_at', null)
               .eq('assigned_to', agentId)
               .eq('status', 'completed')
               .gte('completed_at', sevenDaysAgo)

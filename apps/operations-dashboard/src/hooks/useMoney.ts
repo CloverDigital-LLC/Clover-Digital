@@ -14,6 +14,7 @@ import {
   supabaseConfigured,
 } from '../lib/supabase'
 import { useVentureFilter } from '../context/VentureFilterContext'
+import { CLOVER_PROJECT_FILTER } from '../lib/dataRouting'
 
 const REFRESH_MS = 60_000
 
@@ -102,6 +103,7 @@ export function useShipStreak() {
           ? supabase
               .from('agent_tasks')
               .select('completed_at')
+              .not('venture', 'in', CLOVER_PROJECT_FILTER)
               .eq('status', 'completed')
               .gte('completed_at', since)
               .order('completed_at', { ascending: false })
@@ -110,6 +112,7 @@ export function useShipStreak() {
           ? cloverOpsSupabase
               .from('cd_tasks')
               .select('completed_at')
+              .is('archived_at', null)
               .eq('status', 'completed')
               .gte('completed_at', since)
               .order('completed_at', { ascending: false })

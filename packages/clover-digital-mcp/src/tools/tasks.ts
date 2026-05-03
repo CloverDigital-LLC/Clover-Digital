@@ -88,7 +88,8 @@ function toError(msg: string) {
 const TASK_SELECT =
   "id, ticket_key, title, description, status, department, " +
   "priority, parent_task_id, goal_id, output, error, source_system, source_ref, " +
-  "started_at, completed_at, created_at, updated_at, requested_by, acceptance_criteria";
+  "started_at, completed_at, archived_at, archive_reason, created_at, updated_at, " +
+  "requested_by, acceptance_criteria";
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -156,6 +157,7 @@ export async function handleCreateTask(args: {
         .from("cd_tasks")
         .select("id, ticket_key, title, status")
         .ilike("title", `%${probe}%`)
+        .is("archived_at", null)
         .not("status", "in", "(completed,cancelled,failed)")
         .limit(5);
       if (dups && dups.length > 0) {
@@ -203,6 +205,7 @@ export async function handleListTasks(args: {
   let q = client
     .from("cd_tasks")
     .select(TASK_SELECT)
+    .is("archived_at", null)
     .order("priority", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: false })
     .limit(args.limit ?? 30);

@@ -14,6 +14,7 @@ import {
   wantsCloverOps,
   type CloverKnowledgeRow,
 } from '../lib/cloverOps'
+import { CLOVER_PROJECT_FILTER, withoutCloverProjects } from '../lib/dataRouting'
 
 const CLOVER_KNOWLEDGE_COLUMNS =
   'id, category, title, content, source_agent, source_channel, visibility, tags, is_private, confidence, related_task_id, related_goal_id, superseded_by, expires_at, last_reinforced_at, created_at, updated_at'
@@ -29,15 +30,18 @@ export function useKnowledge(limit = 6) {
     queryKey: ['knowledge', limit, viewRole, projects?.join(',') ?? 'all'],
     queryFn: async () => {
       const cloverReady = cloverOpsConfigured && (await cloverOpsSessionReady())
+      const fleetProjects = withoutCloverProjects(projects)
       const fleetPromise = viewRole === 'admin' && supabaseConfigured
         ? (async () => {
+            if (fleetProjects?.length === 0) return [] as KnowledgeRow[]
             let q = supabase
               .from('knowledge')
               .select('id, project, category, title, content, created_at, scope')
               .in('category', ['decision', 'research', 'insight'])
               .order('created_at', { ascending: false })
               .limit(limit)
-            if (projects) q = q.in('project', projects)
+            if (fleetProjects) q = q.in('project', fleetProjects)
+            else q = q.not('project', 'in', CLOVER_PROJECT_FILTER)
             const { data, error } = await q
             if (error) throw error
             return data as unknown as KnowledgeRow[]
