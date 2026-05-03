@@ -25,9 +25,17 @@ const HAS_MARKDOWN_RE =
 
 const DATE_PREFIX_RE = /^\d{4}-\d{2}-\d{2}:\s*/
 
+export function normalizeHumanText(input: string): string {
+  return input
+    .replace(/\r\n/g, '\n')
+    .replace(/\\r\\n/g, '\n')
+    .replace(/\\n/g, '\n')
+    .replace(/\\t/g, '  ')
+}
+
 export function proseToMarkdown(input: string): string {
   if (!input) return input
-  const trimmed = input.trim()
+  const trimmed = normalizeHumanText(input).trim()
   if (!trimmed) return trimmed
 
   // If there's already markdown structure, just code-format UUIDs and

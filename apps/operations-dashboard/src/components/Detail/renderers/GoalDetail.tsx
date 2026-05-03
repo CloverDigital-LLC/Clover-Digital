@@ -1,7 +1,7 @@
 import type { GoalDetail as GoalDetailData } from '../../../hooks/useGoals'
 import { AgentPill, StatusPill } from '../../atoms'
 import { displayTaskStatus, displayVenture, fmtDate, fmtTime, relTime } from '../../../lib/adapters'
-import { CollapsibleText, Field, FieldGroup } from './shared'
+import { ChecklistText, CollapsibleText, Field, FieldGroup } from './shared'
 import { useDetail } from '../DetailContext'
 import { ArtifactGallery } from './ArtifactGallery'
 
@@ -107,7 +107,7 @@ export function GoalDetail({ row }: { row: GoalDetailData }) {
 
       {goal.success_criteria && (
         <FieldGroup title="Definition of done">
-          <CollapsibleText text={goal.success_criteria} />
+          <ChecklistText text={goal.success_criteria} />
         </FieldGroup>
       )}
 

@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { proseToMarkdown } from './proseToMarkdown'
+import { normalizeHumanText, proseToMarkdown } from './proseToMarkdown'
 
 interface Props {
   /** The raw text. May be markdown, may be prose, may be a stack trace. */
@@ -23,11 +23,13 @@ interface Props {
  * raw, code stays raw. Everything else gets the friendly treatment.
  */
 export function HumanText({ text, variant = 'default', className = '' }: Props) {
+  const normalizedText = useMemo(() => (text ? normalizeHumanText(text) : ''), [text])
+
   const rendered = useMemo(() => {
-    if (!text) return null
+    if (!normalizedText) return null
     if (variant !== 'default') return null
-    return proseToMarkdown(text)
-  }, [text, variant])
+    return proseToMarkdown(normalizedText)
+  }, [normalizedText, variant])
 
   if (!text) return null
 

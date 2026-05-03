@@ -5,6 +5,7 @@
 import { useState, type ReactNode } from 'react'
 import { fmtDate, fmtTime } from '../../../lib/adapters'
 import { HumanText } from '../../HumanText/HumanText'
+import { normalizeHumanText } from '../../HumanText/proseToMarkdown'
 
 export function FieldGroup({
   title,
@@ -88,7 +89,7 @@ export function CollapsibleText({
   variant?: 'default' | 'code' | 'error'
 }) {
   const [expanded, setExpanded] = useState(false)
-  const trimmed = text.trim()
+  const trimmed = normalizeHumanText(text).trim()
   const summary = extractSummary(trimmed)
 
   // Threshold: if the full body is ≤ ~280 chars or only marginally longer
@@ -125,6 +126,17 @@ export function CollapsibleText({
       >
         ↓ Show full context
       </button>
+    </div>
+  )
+}
+
+export function ChecklistText({ text }: { text: string }) {
+  const trimmed = normalizeHumanText(text).trim()
+  if (!trimmed) return null
+
+  return (
+    <div className="rounded-md border border-cream-300/80 bg-cream-50/45 px-3 py-2.5">
+      <HumanText text={trimmed} />
     </div>
   )
 }
