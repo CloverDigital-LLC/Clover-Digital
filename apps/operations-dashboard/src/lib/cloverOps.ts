@@ -106,8 +106,8 @@ const KNOWLEDGE_CATEGORIES = new Set<KnowledgeCategory>([
   'status',
 ])
 
-function displayTitle(key: string | null, title: string): string {
-  return key ? `${key}: ${title}` : title
+function displayTitle(title: string): string {
+  return title.replace(/^CD-[TG]-\d+:\s*/i, '').trim()
 }
 
 function departmentOrNull(
@@ -123,7 +123,7 @@ export function adaptCloverTask(row: CloverTaskRow): AgentTaskRow {
     machine: 'clover-ops',
     project: row.ticket_key ?? 'clover-ops',
     status: row.status,
-    title: displayTitle(row.ticket_key, row.title),
+    title: displayTitle(row.title),
     description: row.description,
     output: row.output,
     error: row.error,
@@ -153,7 +153,7 @@ export function adaptCloverTask(row: CloverTaskRow): AgentTaskRow {
 export function adaptCloverGoal(row: CloverGoalRow): GoalRow {
   return {
     id: toCloverOpsId(row.id),
-    title: displayTitle(row.public_key, row.title),
+    title: displayTitle(row.title),
     description: row.description,
     venture: 'clover-digital',
     department: departmentOrNull(row.department),
